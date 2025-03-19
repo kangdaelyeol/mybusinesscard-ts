@@ -12,10 +12,10 @@ export default function ChangePassword() {
     return (
         <div
             className={classNames(
-                'py-header-height mb-footer-height min-h-[100vh] mx-auto',
+                'py-[var(--header-height)] mb-[var(--footer-height-margin)] min-h-[100vh] mx-auto',
                 {
-                    'bg-color-white': theme === 'light',
-                    'bg-color-black-semilight text-color-white':
+                    'bg-white': theme === 'light',
+                    'bg-black-semilight text-white':
                         theme === 'dark',
                 },
             )}
@@ -28,7 +28,7 @@ export default function ChangePassword() {
                 <label className="block mt-[15px]" htmlFor="password-current">
                     <div
                         className={classNames({
-                            'text-color-black-bright': theme === 'light',
+                            'text-black-bright': theme === 'light',
                         })}
                     >
                         Current Password
@@ -52,7 +52,7 @@ export default function ChangePassword() {
                 <label className="block mt-[15px]" htmlFor="password-new">
                     <div
                         className={classNames({
-                            'text-color-black-bright': theme === 'light',
+                            'text-black-bright': theme === 'light',
                         })}
                     >
                         New Password
@@ -76,7 +76,7 @@ export default function ChangePassword() {
                 <label className="block mt-[15px]" htmlFor="password-confirm">
                     <div
                         className={classNames({
-                            'text-color-black-bright': theme === 'light',
+                            'text-black-bright': theme === 'light',
                         })}
                     >
                         Confirm Password
@@ -98,7 +98,7 @@ export default function ChangePassword() {
                 </label>
 
                 <div
-                    className="cursor-pointer mt-[15px] text-color-blue hover:text-color-blue-light"
+                    className="cursor-pointer mt-[15px] text-blue hover:text-blue-light"
                     onClick={handlers.accountSettingsClick}
                 >
                     Account Settings
@@ -106,11 +106,11 @@ export default function ChangePassword() {
 
                 <div
                     className={classNames(
-                        'py-[10px] w-[300px] mx-auto mt-[25px] font-bold text-center cursor-pointer rounded-[8px] mt-[10px]',
+                        'py-[10px] w-[300px] mx-auto mt-[25px] font-bold text-center cursor-pointer rounded-[8px]',
                         {
-                            'bg-color-black hover:bg-color-black-bright':
+                            'bg-black hover:bg-black-bright':
                                 theme === 'dark',
-                            'bg-color-gray hover:bg-color-black-bright text-color-white':
+                            'bg-gray hover:bg-black-bright text-white':
                                 theme === 'light',
                         },
                     )}
@@ -123,7 +123,7 @@ export default function ChangePassword() {
                     className={classNames(
                         'w-[300px] mx-auto text-center mt-[20px] leading-[1.6]',
                         {
-                            'text-color-blue-light': theme === 'dark',
+                            'text-blue-light': theme === 'dark',
                             'text-red-400': theme === 'light',
                         },
                     )}

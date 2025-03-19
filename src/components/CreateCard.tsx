@@ -13,9 +13,9 @@ export default function CreateCard() {
     }
 
     return (
-        <div className="fixed top-0 left-0 flex flex-col justify-center items-center w-full h-full z-10 bg-color-black/90">
+        <div className="fixed top-0 left-0 flex flex-col justify-center items-center w-full h-full z-10 bg-black/90">
             <div className="relative flex flex-col">
-                <div className="text-color-white text-[30px] text-center font-semibold">
+                <div className="text-white text-[30px] text-center font-semibold">
                     Create Your Card!
                 </div>
 

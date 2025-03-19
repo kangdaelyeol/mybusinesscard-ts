@@ -13,15 +13,15 @@ export default function Login() {
         <form
             onSubmit={handlers.userLogin}
             className={classNames(
-                'min-h-[100vh] pt-header-height pb-[80px] mb-footer-height',
+                'min-h-[100vh] pt-[var(--header-height)] pb-[80px] mb-[var(--footer-height-margin)]',
                 {
-                    'bg-color-black-semilight': theme === 'dark',
-                    'bg-color-white-light': theme === 'light',
+                    'bg-black-semilight': theme === 'dark',
+                    'bg-white-light': theme === 'light',
                 },
             )}
         >
-            <div className="flex flex-col px-[30px] py-[20px] bg-color-white w-[400px] m-auto mt-[80px]">
-                <div className="text-[30px] font-bold text-center text-color-black-light">
+            <div className="flex flex-col px-[30px] py-[20px] bg-white w-[400px] m-auto mt-[80px]">
+                <div className="text-[30px] font-bold text-center text-black-light">
                     LOG IN
                 </div>
 
@@ -49,12 +49,11 @@ export default function Login() {
 
                 <button
                     className={classNames(
-                        'text-color-white py-[7px] mt-[15px]',
+                        'text-white py-[7px] mt-[15px] cursor-pointer',
                         {
-                            'bg-color-gray-light hover:bg-color-black-light':
+                            'bg-gray-light hover:bg-black-light':
                                 theme === 'dark',
-                            'bg-color-blue hover:bg-color-blue-light':
-                                theme === 'light',
+                            'bg-blue hover:bg-blue-light': theme === 'light',
                         },
                     )}
                 >
@@ -70,7 +69,7 @@ export default function Login() {
                         checked={loginInput.remember}
                     />
 
-                    <span className="cursor-pointer select-none text-color-gray">
+                    <span className="cursor-pointer select-none text-gray">
                         Remember me
                     </span>
                 </label>
@@ -80,8 +79,8 @@ export default function Login() {
                 className={classNames(
                     'block mx-auto w-[400px] text-center mt-[15px] hover:underline',
                     {
-                        'text-color-gray': theme === 'dark',
-                        'text-color-blue-light': theme === 'light',
+                        'text-gray': theme === 'dark',
+                        'text-blue-light': theme === 'light',
                     },
                 )}
                 to="/signup"

@@ -13,15 +13,15 @@ export default function Signup() {
         <form
             onSubmit={handlers.signupSubmit}
             className={classNames(
-                'min-h-[100vh] pt-header-height pb-[80px] mb-footer-height',
+                'min-h-[100vh] pt-header-height pb-[80px] mb-footer-height-margin',
                 {
-                    'bg-color-black-semilight': theme === 'dark',
-                    'bg-color-white-light': theme === 'light',
+                    'bg-black-semilight': theme === 'dark',
+                    'bg-white-light': theme === 'light',
                 },
             )}
         >
-            <div className="flex flex-col px-[30px] py-[20px] bg-color-white w-[400px] m-auto mt-[50px]">
-                <div className="text-[30px] font-bold text-center text-color-black-light">
+            <div className="flex flex-col px-[30px] py-[20px] bg-white w-[400px] m-auto mt-[50px]">
+                <div className="text-[30px] font-bold text-center text-black-light">
                     SIGN UP
                 </div>
                 <input
@@ -64,12 +64,11 @@ export default function Signup() {
 
                 <button
                     className={classNames(
-                        'text-color-white py-[7px] mt-[30px]',
+                        'text-white py-[7px] mt-[30px] cursor-pointer',
                         {
-                            'bg-color-gray-light hover:bg-color-black-light':
+                            'bg-gray-light hover:bg-black-light':
                                 theme === 'dark',
-                            'bg-color-blue hover:bg-color-blue-light':
-                                theme === 'light',
+                            'bg-blue hover:bg-blue-light': theme === 'light',
                         },
                     )}
                 >
@@ -80,8 +79,8 @@ export default function Signup() {
                 className={classNames(
                     'block mx-auto w-[400px] text-center mt-[15px] hover:underline',
                     {
-                        'text-color-gray': theme === 'dark',
-                        'text-color-blue-light': theme === 'light',
+                        'text-gray': theme === 'dark',
+                        'text-blue-light': theme === 'light',
                     },
                 )}
                 to="/login"

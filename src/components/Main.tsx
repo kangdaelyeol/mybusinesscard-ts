@@ -13,10 +13,10 @@ export default function Main() {
     return (
         <div
             className={classNames(
-                'py-header-height min-h-[100vh] mb-footer-height',
+                'py-header-height min-h-[100vh] mb-footer-height-margin',
                 {
-                    'bg-color-white': theme === 'light',
-                    'bg-color-black-semilight': theme === 'dark',
+                    'bg-white': theme === 'light',
+                    'bg-black-semilight': theme === 'dark',
                 },
             )}
         >
@@ -25,8 +25,8 @@ export default function Main() {
                     className={classNames(
                         'mx-auto flex h-[500px] mb-[0px] justify-center items-center flex-col text-[30px] font-semibold',
                         {
-                            'text-color-gray-light': theme === 'dark',
-                            'text-color-black': theme === 'light',
+                            'text-gray-light': theme === 'dark',
+                            'text-black': theme === 'light',
                         },
                     )}
                 >
@@ -61,9 +61,9 @@ export default function Main() {
                 className={classNames(
                     'fixed bottom-[20px] right-[20px] w-[40px] h-[40px] flex justify-center items-center cursor-pointer rounded-[50%]',
                     {
-                        'bg-color-white/40 hover:bg-color-white text-color-gray hover:text-color-black':
+                        'bg-white/40 hover:bg-white text-gray hover:text-black':
                             theme === 'dark',
-                        'bg-color-blue/40 hover:bg-color-blue text-color-white hover:bg-color-blue-light':
+                        'bg-blue/40 hover:bg-blue text-white hover:bg-blue-light':
                             theme === 'light',
                     },
                 )}

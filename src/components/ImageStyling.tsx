@@ -59,8 +59,8 @@ export default function ImageStyling({ url, style, saveProfileStyle }) {
 
     return (
         <div className="bg-picture-edit w-screen h-screen fixed top-0 left-0 flex flex-col justify-center items-center backdrop-blur-sm z-10">
-            <div className="bg-color-light flex flex-col">
-                <div className="text-[30px] font-bold text-color-white text-center mb-[20px]">
+            <div className="bg-light flex flex-col">
+                <div className="text-[30px] font-bold text-white text-center mb-[20px]">
                     Set your picture display!
                 </div>
                 <div className="flex gap-[30px] relative">
@@ -75,7 +75,7 @@ export default function ImageStyling({ url, style, saveProfileStyle }) {
                         }}
                     >
                         <img
-                            className="absolute filter scale-[var(--img-scale)] origin-top-left translate-x-[var(--img-translateX)] translate-y-[var(--img-translateY)]"
+                            className="absolute picture-filter scale-[var(--img-scale)] origin-top-left translate-x-[var(--img-translateX)] translate-y-[var(--img-translateY)]"
                             src={url}
                             alt="resized picture"
                             width={newWidth}

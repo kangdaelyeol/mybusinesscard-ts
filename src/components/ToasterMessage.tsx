@@ -10,8 +10,8 @@ export default function ToasterMessage({ message }) {
                 className={classNames(
                     'w-[250px] p-[15px] font-semibold text-[17px] text-center flex justify-center items-center rounded-[10px] mx-auto',
                     {
-                        'bg-color-white text-color-black': theme === 'dark',
-                        'bg-color-blue-light text-color-white':
+                        'bg-white text-black': theme === 'dark',
+                        'bg-blue-light text-white':
                             theme === 'light',
                     },
                 )}

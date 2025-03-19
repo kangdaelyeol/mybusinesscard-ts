@@ -20,7 +20,7 @@ export default function Header() {
         <header
             className={classNames('fixed w-[100%] z-10', {
                 'bg-white text-black-light': theme === 'light',
-                'bg-color-black text-color-white-light': theme === 'dark',
+                'bg-black text-white': theme === 'dark',
             })}
         >
             <div className="max-w-[1100px] relative mx-auto h-header-height flex">
@@ -49,7 +49,7 @@ export default function Header() {
                 >
                     <span
                         className={classNames('material-symbols-outlined', {
-                            'text-color-white-light': theme === 'dark',
+                            'text-white-light': theme === 'dark',
                         })}
                     >
                         {theme === 'dark' ? 'light_mode' : 'dark_mode'}

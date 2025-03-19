@@ -27,11 +27,10 @@ export default function AccountDetail() {
     return (
         <div
             className={classNames(
-                'py-header-height mb-footer-height min-h-[100vh] mx-auto',
+                'py-header-height mb-footer-height-margin min-h-[100vh] mx-auto',
                 {
-                    'bg-color-white': theme === 'light',
-                    'bg-color-black-semilight text-color-white':
-                        theme === 'dark',
+                    'bg-white': theme === 'light',
+                    'bg-black-semilight text-white': theme === 'dark',
                 },
             )}
         >
@@ -46,15 +45,14 @@ export default function AccountDetail() {
                     className={classNames(
                         'absolute bottom-[-8px] right-[-8px] flex justify-center items-center w-[30px] h-[30px] rounded-[50%] cursor-pointer',
                         {
-                            'bg-color-black hover:bg-color-black-bright':
-                                theme === 'dark',
-                            'bg-color-blue hover:bg-color-blue-light text-color-white':
+                            'bg-black hover:bg-black-bright': theme === 'dark',
+                            'bg-blue hover:bg-blue-light text-white':
                                 theme === 'light',
                         },
                     )}
                     onClick={handlers.editProfileClick}
                 >
-                    <span className="material-symbols-outlined text-[20px] text-color-white">
+                    <span className="material-symbols-outlined text-[20px] text-white">
                         edit
                     </span>
                 </div>
@@ -64,9 +62,8 @@ export default function AccountDetail() {
                         className={classNames(
                             'flex flex-col absolute bottom-[-8px] right-[-110px] w-[100px] rounded-[10px] overflow-hidden font-semibold',
                             {
-                                'bg-color-black': theme === 'dark',
-                                'bg-color-white-light shadow-2xl':
-                                    theme === 'light',
+                                'bg-black': theme === 'dark',
+                                'bg-white-light shadow-2xl': theme === 'light',
                             },
                         )}
                     >
@@ -75,10 +72,8 @@ export default function AccountDetail() {
                             className={classNames(
                                 'text-center py-[5px] cursor-pointer',
                                 {
-                                    'hover:bg-color-black-bright':
-                                        theme === 'dark',
-                                    'hover:bg-color-gray-light':
-                                        theme === 'light',
+                                    'hover:bg-black-bright': theme === 'dark',
+                                    'hover:bg-gray-light': theme === 'light',
                                 },
                             )}
                         >
@@ -96,10 +91,8 @@ export default function AccountDetail() {
                             className={classNames(
                                 'text-center py-[5px] cursor-pointer',
                                 {
-                                    'hover:bg-color-black-bright':
-                                        theme === 'dark',
-                                    'hover:bg-color-gray-light':
-                                        theme === 'light',
+                                    'hover:bg-black-bright': theme === 'dark',
+                                    'hover:bg-gray-light': theme === 'light',
                                 },
                             )}
                             onClick={handlers.editPositionClick}
@@ -110,12 +103,10 @@ export default function AccountDetail() {
                 )}
             </div>
 
-            <div className="flex justify-center">
+            <div className="flex justify-center max-w-[700px] m-auto px-[20px]">
                 <div className="grow-1 p-[10px]">
                     <div className="">
-                        <div className="text-[15px] text-color-gray">
-                            username
-                        </div>
+                        <div className="text-[15px] text-gray">username</div>
 
                         <div className="font-semibold text-[20px] pl-[2px]">
                             {userState.username}
@@ -123,9 +114,7 @@ export default function AccountDetail() {
                     </div>
 
                     <label htmlFor="nickname" className="block mt-[10px]">
-                        <div className="text-[15px] text-color-gray">
-                            nickname
-                        </div>
+                        <div className="text-[15px] text-gray">nickname</div>
 
                         <input
                             type="text"
@@ -143,7 +132,7 @@ export default function AccountDetail() {
                     </label>
 
                     <div
-                        className="cursor-pointer mt-[20px] text-color-blue hover:text-color-blue-light"
+                        className="cursor-pointer mt-[20px] text-blue hover:text-blue-light"
                         onClick={handlers.changePasswordClick}
                     >
                         Change Password
@@ -153,9 +142,9 @@ export default function AccountDetail() {
                         className={classNames(
                             'py-[10px] w-[300px] font-bold text-center cursor-pointer rounded-[8px] mt-[20px]',
                             {
-                                'bg-color-black hover:bg-color-black-bright':
+                                'bg-black hover:bg-black-bright':
                                     theme === 'dark',
-                                'bg-color-gray hover:bg-color-black-bright text-color-white':
+                                'bg-gray hover:bg-black-bright text-white':
                                     theme === 'light',
                             },
                         )}
@@ -176,9 +165,8 @@ export default function AccountDetail() {
                             className={classNames(
                                 'fixed top-0 left-0 w-full h-full flex justify-center items-center',
                                 {
-                                    'bg-color-black/90': theme === 'dark',
-                                    'bg-color-white-light/90':
-                                        theme === 'light',
+                                    'bg-black/90': theme === 'dark',
+                                    'bg-white-light/90': theme === 'light',
                                 },
                             )}
                         >
@@ -186,9 +174,8 @@ export default function AccountDetail() {
                                 className={classNames(
                                     'h-[300px] w-[500px] rounded-[20px] flex flex-col justify-center items-center gap-[30px]',
                                     {
-                                        'bg-color-black-semilight':
-                                            theme === 'dark',
-                                        'bg-color-white': theme === 'light',
+                                        'bg-black-semilight': theme === 'dark',
+                                        'bg-white': theme === 'light',
                                     },
                                 )}
                             >
@@ -223,7 +210,7 @@ export default function AccountDetail() {
                                         className={classNames(
                                             ' px-[15px] py-[10px] rounded-[5px]',
                                             {
-                                                'btn-dark text-color-white':
+                                                'btn-dark text-white':
                                                     theme === 'dark',
                                                 'btn-light': theme === 'light',
                                             },
@@ -240,7 +227,7 @@ export default function AccountDetail() {
                         className={classNames(
                             'w-[300px] text-center mt-[20px] leading-[1.6]',
                             {
-                                'text-color-blue-light': theme === 'dark',
+                                'text-blue-light': theme === 'dark',
                                 'text-red-400': theme === 'light',
                             },
                         )}
