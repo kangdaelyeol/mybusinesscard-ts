@@ -3,10 +3,10 @@ import { userFactory } from '@/factory'
 import { db } from '@/service/firebase'
 import { User, UserProfile, UserProfileStyle } from '@/models/user-model'
 import { validation } from '@/client/validate'
-import { UserClientResponse } from '@/client/types'
+import { UserClientResponse, UserGetResponse } from '@/client/types'
 
 export const userClient = {
-    get: async (username: string): Promise<UserClientResponse> => {
+    get: async (username: string): Promise<UserGetResponse> => {
         const userRef = ref(db, `users/${username}`)
         const snapshot = await get(userRef)
         if (!snapshot.exists()) {
@@ -29,7 +29,7 @@ export const userClient = {
         nickname: string,
         password: string,
         confirmPassword: string,
-    ): Promise<UserClientResponse> => {
+    ): Promise<UserGetResponse> => {
         const validateUsernameRes = validation.username(username)
 
         if (validateUsernameRes.isValid === false) {

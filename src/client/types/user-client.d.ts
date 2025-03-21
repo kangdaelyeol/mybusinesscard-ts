@@ -1,7 +1,19 @@
 import { User } from '@/models/user-model'
 
-export type UserClientResponse = {
+interface ErrorResponse {
     status: number
-    reason?: string
-    data?: User
+    reason: string
 }
+
+export type UserClientResponse =
+    | {
+          status: number
+      }
+    | ErrorResponse
+
+export type UserGetResponse =
+    | {
+          status: numeber
+          data: User
+      }
+    | ErrorResponse
