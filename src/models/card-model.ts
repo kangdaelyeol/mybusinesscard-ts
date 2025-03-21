@@ -23,3 +23,30 @@ export const DEFAULT_CARD = {
     theme: 'black',
     profile: DEFAULT_CARD_PROFILE,
 }
+
+export interface CardStyle {
+    scale: number
+    transX: number
+    transY: number
+    rounded: number
+    width: number
+    height: number
+}
+
+export interface CardProfile {
+    url: string
+    assetId: string
+    publicId: string
+    style: CardStyle
+}
+
+export interface Card {
+    id: string
+    name: string
+    description: string
+    theme: string
+    createdBy: string
+    createdAt: string
+    
+    profile: CardProfile
+}
