@@ -1,21 +1,29 @@
 import { db } from '@/service/firebase'
 import { ref, get, child, set } from 'firebase/database'
+import { validation } from './validate'
+import { AuthClientResponse, AuthGetResponse } from './types/auth-client'
 
 export const authClient = {
-    signIn: async (username, password) => {
-        if (!/^[\w]{4,20}$/.test(username)) {
+    signIn: async (
+        username: string,
+        password: string,
+    ): Promise<AuthGetResponse> => {
+        const validateUsernameRes = validation.username(username)
+        if (validateUsernameRes.isValid === false) {
             return {
                 status: 400,
                 reason: "username has 4 to 20 length of characters and doesn't contain special symbol.",
             }
         }
 
-        if (!/^[\w!@#$%^&*()+=]{4,20}$/.test(password)) {
+        const validatePasswordRes = validation.password(password)
+        if (validatePasswordRes.isValid === false) {
             return {
                 status: 400,
                 reason: "password has 4 to 20 length of characters and doesn't contain blank",
             }
         }
+
         try {
             const snapshot = await get(child(ref(db), `/users/${username}`))
 
@@ -23,25 +31,25 @@ export const authClient = {
                 return { status: 400, reason: 'invalid username' }
             }
 
-            const data = snapshot.val()
-            if (data.password !== password)
+            const userData = snapshot.val()
+            if (userData.password !== password)
                 return { status: 400, reason: "password doesn't match!" }
-            data.cards = data.cards ? Object.values(data.cards) : []
 
-            return { status: 200, data }
+            return { status: 200, data: userData }
         } catch (e) {
             console.log(e)
-            return { status: 400, reason: 'error' }
+            return { status: 400, reason: 'Failed to request API - signIn' }
         }
     },
 
     changePassword: async (
-        username,
-        password,
-        newPassword,
-        confirmPassword,
-    ) => {
-        if (!/^[\w!@#$%^&*()+=]{4,20}$/.test(password)) {
+        username: string,
+        password: string,
+        newPassword: string,
+        confirmPassword: string,
+    ): Promise<AuthClientResponse> => {
+        const validatePasswordRes = validation.password(password)
+        if (validatePasswordRes.isValid === false) {
             return {
                 status: 400,
                 reason: "password has 4 to 20 length of characters and doesn't contain blank",
@@ -76,7 +84,10 @@ export const authClient = {
             await set(userPasswordRef, newPassword)
             return { status: 200 }
         } catch (e) {
-            return { status: 400, reason: e }
+            return {
+                status: 400,
+                reason: 'Failed to request API - changePassword',
+            }
         }
     },
 }
