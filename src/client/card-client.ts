@@ -1,25 +1,123 @@
+import { Card, CardProfile, CardStyle } from '@/models/card-model'
 import { db } from '@/service/firebase'
-import { ref, set, remove } from 'firebase/database'
+import {
+    ref,
+    set,
+    remove,
+    query,
+    orderByChild,
+    equalTo,
+    get,
+} from 'firebase/database'
+import { CardListResponse, CardClientResponse } from '@/client/types'
 
 export const cardClient = {
-    create: async (username, card) => {
+    getList: async (username: string): Promise<CardListResponse> => {
+        const cardRef = ref(db, 'cards')
+
+        const dbQuery = query(
+            cardRef,
+            orderByChild('createdBy'),
+            equalTo(username),
+        )
+
         try {
-            const cardRef = ref(db, `users/${username}/cards/${card.id}`)
+            const snapshot = await get(dbQuery)
+
+            if (!snapshot.exists()) return { status: 200, data: [] }
+            else {
+                const cards = snapshot.val()
+
+                return { status: 200, data: Object.values(cards) }
+            }
+        } catch (e) {
+            console.error(e)
+            return {
+                status: 400,
+                reason: 'Failed to request API - getCardList',
+            }
+        }
+    },
+
+    create: async (card: Card): Promise<CardClientResponse> => {
+        try {
+            const cardRef = ref(db, `cards/${card.id}`)
             await set(cardRef, card)
             return {
                 status: 200,
             }
         } catch (e) {
+            console.error(e)
             return {
                 status: 400,
-                reason: e,
+                reason: 'Failed to request API - createCard',
             }
         }
     },
 
-    updateName: async (username, cardId, value) => {
+    updateName: async (
+        cardId: string,
+        value: string,
+    ): Promise<CardClientResponse> => {
         try {
-            const cardRef = ref(db, `users/${username}/cards/${cardId}/name`)
+            const cardRef = ref(db, `cards/${cardId}/name`)
+            await set(cardRef, value)
+            return {
+                status: 200,
+            }
+        } catch (e) {
+            console.error(e)
+            return {
+                status: 400,
+                reason: 'Failed to request API - updateCardName',
+            }
+        }
+    },
+
+    updateDescription: async (
+        cardId: string,
+        value: string,
+    ): Promise<CardClientResponse> => {
+        try {
+            const cardRef = ref(db, `cards/${cardId}/description`)
+            await set(cardRef, value)
+            return {
+                status: 200,
+            }
+        } catch (e) {
+            console.error(e)
+            return {
+                status: 400,
+                reason: 'Failed to request API - updateCardDescription',
+            }
+        }
+    },
+
+    updateTheme: async (
+        cardId: string,
+        value: string,
+    ): Promise<CardClientResponse> => {
+        try {
+            const cardRef = ref(db, `cards/${cardId}/theme`)
+            await set(cardRef, value)
+            return {
+                status: 200,
+            }
+        } catch (e) {
+            console.error(e)
+            return {
+                status: 400,
+                reason: 'Failed to request API - updateCardTheme',
+            }
+        }
+    },
+
+    updateProfile: async (
+        cardId: string,
+        value: CardProfile,
+    ): Promise<CardClientResponse> => {
+        try {
+            const cardRef = ref(db, `cards/${cardId}/profile`)
             await set(cardRef, value)
             return {
                 status: 200,
@@ -27,89 +125,43 @@ export const cardClient = {
         } catch (e) {
             return {
                 status: 400,
-                reason: e,
+                reason: 'Failed to request API - updateCardProfile',
             }
         }
     },
 
-    updateDescription: async (username, cardId, value) => {
+    updateProfileStyle: async (
+        cardId: string,
+        value: CardStyle,
+    ): Promise<CardClientResponse> => {
         try {
-            const cardRef = ref(
-                db,
-                `users/${username}/cards/${cardId}/description`,
-            )
+            const cardRef = ref(db, `cards/${cardId}/profile/style`)
             await set(cardRef, value)
             return {
                 status: 200,
             }
         } catch (e) {
+            console.error(e)
             return {
                 status: 400,
-                reason: e,
+                reason: 'Failed to request API - updateCardProfileStyle',
             }
         }
     },
 
-    updateTheme: async (username, cardId, value) => {
+    remove: async (cardId: string): Promise<CardClientResponse> => {
         try {
-            const cardRef = ref(db, `users/${username}/cards/${cardId}/theme`)
-            await set(cardRef, value)
-            return {
-                status: 200,
-            }
-        } catch (e) {
-            return {
-                status: 400,
-                reason: e,
-            }
-        }
-    },
-
-    updateProfile: async (username, cardId, value) => {
-        try {
-            const cardRef = ref(db, `users/${username}/cards/${cardId}/profile`)
-            await set(cardRef, value)
-            return {
-                status: 200,
-            }
-        } catch (e) {
-            return {
-                status: 400,
-                reason: e,
-            }
-        }
-    },
-
-    updateProfileStyle: async (username, cardId, value) => {
-        try {
-            const cardRef = ref(
-                db,
-                `users/${username}/cards/${cardId}/profile/style`,
-            )
-            await set(cardRef, value)
-            return {
-                status: 200,
-            }
-        } catch (e) {
-            return {
-                status: 400,
-                reason: e,
-            }
-        }
-    },
-
-    remove: async (username, cardId) => {
-        try {
-            const cardRef = ref(db, `users/${username}/cards/${cardId}`)
-            remove(cardRef)
+            const cardRef = ref(db, `cards/${cardId}`)
+            await remove(cardRef)
 
             return {
                 status: 200,
             }
         } catch (e) {
+            console.error(e)
             return {
                 status: 400,
-                reason: e,
+                reason: 'Failed to request API - removeCard',
             }
         }
     },
