@@ -1,21 +1,22 @@
+import { ref, set, get, remove } from 'firebase/database'
 import { userFactory } from '@/factory'
 import { db } from '@/service/firebase'
-import { ref, set, get, remove } from 'firebase/database'
+import { User, UserProfile, UserProfileStyle } from '@/models/user-model'
+import { validation } from '@/client/validate'
+import { UserClientResponse } from '@/client/types'
 
 export const userClient = {
-    get: async (username) => {
+    get: async (username: string): Promise<UserClientResponse> => {
         const userRef = ref(db, `users/${username}`)
         const snapshot = await get(userRef)
         if (!snapshot.exists()) {
             return {
                 status: 400,
-                reason: "user doesn't exist!",
+                reason: "User doesn't exist!",
             }
         }
 
-        const userData = snapshot.val()
-
-        userData.cards = userData.cards ? Object.values(userData.cards) : []
+        const userData: User = snapshot.val()
 
         return {
             status: 200,
@@ -23,25 +24,36 @@ export const userClient = {
         }
     },
 
-    create: async (username, nickname, password, confirmPassword) => {
-        if (!/^[A-Za-z0-9_-]{4,20}$/.test(username)) {
+    create: async (
+        username: string,
+        nickname: string,
+        password: string,
+        confirmPassword: string,
+    ): Promise<UserClientResponse> => {
+        const validateUsernameRes = validation.username(username)
+
+        if (validateUsernameRes.isValid === false) {
             return {
                 status: 400,
-                reason: "username should have 4 to 20 characters, shouldn't contain blank(nbsp) and special symbols.",
+                reason: validateUsernameRes.reason,
             }
         }
 
-        if (!/^[A-Za-z가-힣0-9]{2,20}$/.test(nickname)) {
+        const validateNicknameRes = validation.nickname(nickname)
+
+        if (validateNicknameRes.isValid === false) {
             return {
                 status: 400,
-                reason: "nickname should have 2 to 20 characters, shouldn't contain blank(nbsp) and special symbols.",
+                reason: validateNicknameRes.reason,
             }
         }
 
-        if (!/^[\w.%+-]{4,20}$/.test(password)) {
+        const validatePasswordRes = validation.password(password)
+
+        if (validatePasswordRes.isValid === false) {
             return {
                 status: 400,
-                reason: "password should have 4 to 20 characters, shouldn't contain blank(nbsp)",
+                reason: validatePasswordRes.reason,
             }
         }
 
@@ -57,7 +69,7 @@ export const userClient = {
             const snapshot = await get(userRef)
 
             if (snapshot.exists()) {
-                return { status: 400, reason: 'username already exists.' }
+                return { status: 400, reason: 'Username already exists.' }
             }
 
             const newUser = userFactory.createUser({
@@ -70,48 +82,55 @@ export const userClient = {
 
             return {
                 status: 200,
-                value: {
-                    ...newUser,
-                    cards: [],
-                },
+                data: newUser,
             }
         } catch (e) {
-            return { status: 400, reason: e }
+            console.error(e)
+            return { status: 400, reason: 'Failed to request API - createUser' }
         }
     },
 
-    remove: async (username) => {
+    remove: async (username: string): Promise<UserClientResponse> => {
         const userRef = ref(db, `/users/${username}`)
         try {
-            await remove(userRef, null)
+            await remove(userRef)
 
             return {
                 status: 200,
             }
         } catch (e) {
+            console.error(e)
             return {
                 status: 400,
-                reason: e,
+                reason: 'Failed to request API - removeUser',
             }
         }
     },
 
-    updateProfile: async (username, profile) => {
+    updateProfile: async (
+        username: string,
+        profile: UserProfile,
+    ): Promise<UserClientResponse> => {
         const userProfileRef = ref(db, `users/${username}/profile`)
+
         try {
             await set(userProfileRef, profile)
             return {
                 status: 200,
             }
         } catch (e) {
+            console.error(e)
             return {
                 status: 400,
-                reason: e,
+                reason: 'Failed to request API - updateUserProfile',
             }
         }
     },
 
-    updateProfileStyle: async (username, style) => {
+    updateProfileStyle: async (
+        username: string,
+        style: UserProfileStyle,
+    ): Promise<UserClientResponse> => {
         const userProfileStyleRef = ref(db, `users/${username}/profile/style`)
         try {
             await set(userProfileStyleRef, style)
@@ -119,18 +138,24 @@ export const userClient = {
                 status: 200,
             }
         } catch (e) {
+            console.error(e)
             return {
                 status: 400,
-                reason: e,
+                reason: 'failed to request API - updateUserProfileStyle',
             }
         }
     },
 
-    updateNickname: async (username, nickname) => {
-        if (!/^[가-힣a-zA-Z0-9]{2,20}$/.test(nickname)) {
+    updateNickname: async (
+        username: string,
+        nickname: string,
+    ): Promise<UserClientResponse> => {
+        const validateNicknameRes = validation.nickname(nickname)
+
+        if (validateNicknameRes.isValid === false) {
             return {
                 status: 400,
-                reason: "nickname should have 2 to 20 characters, shouldn't contain blank(nbsp) and special symbols.",
+                reason: "Nickname should have 2 to 20 characters, shouldn't contain blank(nbsp) and special symbols.",
             }
         }
 
@@ -141,9 +166,10 @@ export const userClient = {
                 status: 200,
             }
         } catch (e) {
+            console.error(e)
             return {
                 status: 400,
-                reason: e,
+                reason: 'Failed to request API - updateUserNickname',
             }
         }
     },
