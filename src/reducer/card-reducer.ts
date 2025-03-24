@@ -1,15 +1,7 @@
-import { cardFactory } from '@/factory'
+import { Card, cardFactory } from '@/models'
+import { CARD_ACTIONS, CardAction } from '@/reducer'
 
-export const CARD_ACTIONS = Object.freeze({
-    UPDATE_NAME: Symbol.for('UPDATE_NAME'),
-    UPDATE_DESCRIPTION: Symbol.for('UPDATE_DESCRIPTION'),
-    UPDATE_THEME: Symbol.for('UPDATE_THEME'),
-    UPDATE_PROFILE: Symbol.for('UPDATE_PROFILE'),
-    UPDATE_PROFILE_STYLE: Symbol.for('UPDATE_PROFILE_STYLE'),
-    CLEAR_CARD: Symbol.for('CLEAR_CARD'),
-})
-
-export const cardReducer = (state, action) => {
+export const cardReducer = (state: Card, action: CardAction): Card => {
     switch (action.type) {
         case CARD_ACTIONS.UPDATE_NAME:
             return {
@@ -38,8 +30,10 @@ export const cardReducer = (state, action) => {
                 ...state,
                 profile: {
                     ...state.profile,
-                    style: { ...action.payload.style },
+                    style: action.payload.style,
                 },
             }
+        default:
+            throw new Error(`Unexpected action: ${action}`)
     }
 }
