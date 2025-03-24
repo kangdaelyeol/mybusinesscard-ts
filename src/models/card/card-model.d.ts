@@ -18,8 +18,10 @@ export interface Card {
     id: string
     name: string
     description: string
-    theme: 'black' | 'pink'
+    theme: CardTheme
     createdBy: string
     createdAt: string
     profile: CardProfile
 }
+
+export type CardTheme = 'black' | 'pink'
