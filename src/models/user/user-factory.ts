@@ -9,7 +9,9 @@ import {
 } from '@/models'
 
 export const userFactory = {
-    createUserProfileStyle(style: Partial<UserProfileStyle>): UserProfileStyle {
+    createUserProfileStyle(
+        style: Partial<UserProfileStyle> = {},
+    ): UserProfileStyle {
         return {
             scale: style.scale ?? DEFAULT_USER_PROFILE_STYLE.scale,
             transX: style.transX ?? DEFAULT_USER_PROFILE_STYLE.transX,
@@ -20,7 +22,7 @@ export const userFactory = {
         }
     },
 
-    createUserProfile(profile: DeepPartial<UserProfile>): UserProfile {
+    createUserProfile(profile: DeepPartial<UserProfile> = {}): UserProfile {
         return {
             url: profile.url ?? DEFAULT_USER_PROFILE.url,
             assetId: profile.assetId ?? DEFAULT_USER_PROFILE.assetId,
@@ -31,7 +33,7 @@ export const userFactory = {
         }
     },
 
-    createUser(user: DeepPartial<User>): User {
+    createUser(user: DeepPartial<User> = {}): User {
         return {
             username: user.username ?? DEFAULT_USER.username,
             nickname: user.nickname ?? DEFAULT_USER.nickname,

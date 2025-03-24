@@ -9,7 +9,7 @@ import {
 } from '@/models'
 
 export const cardFactory = {
-    createCardProfileStyle(style: Partial<CardStyle>): CardStyle {
+    createCardProfileStyle(style: Partial<CardStyle> = {}): CardStyle {
         return {
             scale: style.scale ?? DEFAULT_CARD_PROFILE_STYLE.scale,
             transX: style.transX ?? DEFAULT_CARD_PROFILE_STYLE.transX,
@@ -20,7 +20,7 @@ export const cardFactory = {
         }
     },
 
-    createCardProfile(profile: DeepPartial<CardProfile>): CardProfile {
+    createCardProfile(profile: DeepPartial<CardProfile> = {}): CardProfile {
         return {
             url: profile.url ?? DEFAULT_CARD_PROFILE.url,
             assetId: profile.assetId ?? DEFAULT_CARD_PROFILE.assetId,
@@ -31,7 +31,7 @@ export const cardFactory = {
         }
     },
 
-    createCard(card: DeepPartial<Card>): Card {
+    createCard(card: DeepPartial<Card> = {}): Card {
         return {
             id: card.id ?? DEFAULT_CARD.id,
             name: card.name ?? DEFAULT_CARD.name,
