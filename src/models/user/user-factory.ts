@@ -37,6 +37,7 @@ export const userFactory = {
         return {
             username: user.username ?? DEFAULT_USER.username,
             nickname: user.nickname ?? DEFAULT_USER.nickname,
+            password: user.password ?? undefined,
             profile: user.profile
                 ? this.createUserProfile(user.profile)
                 : DEFAULT_USER_PROFILE,
