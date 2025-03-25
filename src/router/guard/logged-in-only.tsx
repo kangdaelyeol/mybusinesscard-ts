@@ -1,11 +1,10 @@
 import { ReactNode, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { cardClient, userClient } from '@/client'
 import { initCards } from '@/store/cards-slice'
 import { setUser } from '@/store/user-slice'
-import { LOCALSTORAGE_TOKEN_NAME } from '@/constants'
 import { AppDispatch, RootState } from '@/store'
+import { authHelper } from '@/helpers'
 
 interface LoggedInOnlyProps {
     children: ReactNode
@@ -22,45 +21,37 @@ export default function LoggedInOnly({ children }: LoggedInOnlyProps) {
         ;(async () => {
             if (userState?.username) return
 
-            const storageUsername = localStorage.getItem(
-                LOCALSTORAGE_TOKEN_NAME,
-            )
+            const storageUsername = authHelper.getLocalStorageUsername()
 
             if (!storageUsername) {
                 navigate('/login', { replace: true })
                 return
             }
 
-            const getUserRes = await userClient.get(storageUsername)
+            const user = await authHelper.fetchUser(storageUsername)
 
-            if (getUserRes.status === 200 && 'data' in getUserRes) {
-                const { username, profile, nickname } = getUserRes.data
-
-                const getCardListRes = await cardClient.getList(username)
-
-                if (getCardListRes.status === 200 && 'data' in getCardListRes) {
-                    dispatch(setUser({ username, profile, nickname }))
-                    dispatch(initCards({ cards: getCardListRes.data }))
-                    return
-                } else if (
-                    getCardListRes.status === 400 &&
-                    'reason' in getCardListRes
-                ) {
-                    console.error(
-                        `Unexpected Error in requesting cards - ${getCardListRes.reason}`,
-                    )
-                    localStorage.removeItem(storageUsername)
-                    navigate('/')
-                    return
-                }
-            } else if (getUserRes.status === 400 && 'reason' in getUserRes) {
-                console.error(
-                    `Unexpected Error in verifying user - ${getUserRes.reason}`,
-                )
-                localStorage.removeItem(storageUsername)
-                navigate('/')
+            if (!user) {
+                authHelper.removeLocalStorageUsername()
+                navigate('/login', { replace: true })
                 return
             }
+
+            const cardList = await authHelper.fetchCardList(user.username)
+
+            if (!cardList) {
+                authHelper.removeLocalStorageUsername()
+                navigate('/login', { replace: true })
+                return
+            }
+
+            dispatch(
+                setUser({
+                    username: user.username,
+                    profile: user.profile,
+                    nickname: user.nickname,
+                }),
+            )
+            dispatch(initCards({ cards: cardList }))
         })()
     }, [])
 
