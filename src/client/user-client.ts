@@ -1,7 +1,6 @@
 import { ref, set, get, remove } from 'firebase/database'
-import { userFactory } from '@/factory'
 import { db } from '@/service/firebase'
-import { User, UserProfile, UserProfileStyle } from '@/models/user-model'
+import { User, userFactory, UserProfile, UserProfileStyle } from '@/models'
 import { validation } from '@/client/validate'
 import { UserClientResponse, UserGetResponse } from '@/client/types'
 

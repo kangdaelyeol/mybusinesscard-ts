@@ -13,7 +13,7 @@ export type UserClientResponse =
 
 export type UserGetResponse =
     | {
-          status: numeber
+          status: number
           data: User
       }
     | ErrorResponse
