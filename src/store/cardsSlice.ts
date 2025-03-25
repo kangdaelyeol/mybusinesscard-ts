@@ -1,10 +1,14 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+
+import { Card, CardProfile, CardTheme } from '@/models'
+
+type CardListState = Card[]
 
 const cardsSlice = createSlice({
     name: 'cards',
-    initialState: [],
+    initialState: [] as CardListState,
     reducers: {
-        initCards: (_, action) => {
+        initCards: (_, action: PayloadAction<{ cards: Card[] }>) => {
             const { cards } = action.payload
             return [...cards]
         },
@@ -13,50 +17,100 @@ const cardsSlice = createSlice({
             return []
         },
 
-        updateCardName: (state, action) => {
+        updateCardName: (
+            state,
+            action: PayloadAction<{ id: string; value: string }>,
+        ) => {
             const { id, value } = action.payload
 
             const idx = state.findIndex((card) => card.id === id)
+
+            if (idx === -1) {
+                console.error(`Can't find cards id - ${id}`)
+                return
+            }
+
             state[idx].name = value
         },
 
-        updateCardDescription: (state, action) => {
+        updateCardDescription: (
+            state,
+            action: PayloadAction<{ id: string; value: string }>,
+        ) => {
             const { id, value } = action.payload
 
             const idx = state.findIndex((card) => card.id === id)
+
+            if (idx === -1) {
+                console.error(`Can't find cards id - ${id}`)
+                return
+            }
+
             state[idx].description = value
         },
 
-        updateCardTheme: (state, action) => {
+        updateCardTheme: (
+            state,
+            action: PayloadAction<{ id: string; value: CardTheme }>,
+        ) => {
             const { id, value } = action.payload
 
             const idx = state.findIndex((card) => card.id === id)
+
+            if (idx === -1) {
+                console.error(`Can't find cards id - ${id}`)
+                return
+            }
+
             state[idx].theme = value
         },
 
-        updateCardProfile: (state, action) => {
+        updateCardProfile: (
+            state,
+            action: PayloadAction<{ id: string; value: CardProfile }>,
+        ) => {
             const { id, value } = action.payload
 
             const idx = state.findIndex((card) => card.id === id)
+
+            if (idx === -1) {
+                console.error(`Can't find cards id - ${id}`)
+                return
+            }
+
             state[idx].profile = value
         },
 
-        updateCardProfileStyle: (state, action) => {
+        updateCardProfileStyle: (
+            state,
+            action: PayloadAction<{ id: string; value: CardProfile }>,
+        ) => {
             const { id, value } = action.payload
 
             const idx = state.findIndex((card) => card.id === id)
+
+            if (idx === -1) {
+                console.error(`Can't find cards id - ${id}`)
+                return
+            }
+
             state[idx].profile.style = { ...state[idx].profile.style, ...value }
         },
 
-        deleteCard: (state, action) => {
+        deleteCard: (state, action: PayloadAction<{ id: string }>) => {
             const { id } = action.payload
 
             const idx = state.findIndex((card) => card.id === id)
 
+            if (idx === -1) {
+                console.error(`Can't find cards id - ${id}`)
+                return
+            }
+
             state.splice(idx, 1)
         },
 
-        createCard: (state, action) => {
+        createCard: (state, action: PayloadAction<{ card: Card }>) => {
             const { card } = action.payload
             state.push(card)
         },

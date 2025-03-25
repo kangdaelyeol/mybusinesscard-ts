@@ -1,11 +1,18 @@
-import { createSlice } from '@reduxjs/toolkit'
-import { userFactory } from '@/factory'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { User, userFactory, UserProfile, UserProfileStyle } from '@/models'
 
 const userSlice = createSlice({
     name: 'user',
     initialState: userFactory.createUser(),
     reducers: {
-        loginUser: (state, action) => {
+        setUser: (
+            state: User,
+            action: PayloadAction<{
+                username: string
+                profile: UserProfile
+                nickname: string
+            }>,
+        ) => {
             const { username, profile, nickname } = action.payload
 
             state.username = username
@@ -13,7 +20,7 @@ const userSlice = createSlice({
             state.nickname = nickname
         },
 
-        logoutUser: (state, _) => {
+        clearUser: (state: User) => {
             const { username, profile, nickname } = userFactory.createUser()
 
             state.username = username
@@ -21,23 +28,29 @@ const userSlice = createSlice({
             state.nickname = nickname
         },
 
-        updateUserProfile: (state, action) => {
+        updateUserProfile: (
+            state: User,
+            action: PayloadAction<UserProfile>,
+        ) => {
             state.profile = action.payload
         },
 
-        updateUserProfileStyle: (state, action) => {
+        updateUserProfileStyle: (
+            state: User,
+            action: PayloadAction<UserProfileStyle>,
+        ) => {
             state.profile.style = action.payload
         },
 
-        updateUserNickname: (state, action) => {
+        updateUserNickname: (state: User, action: PayloadAction<string>) => {
             state.nickname = action.payload
         },
     },
 })
 
 export const {
-    loginUser,
-    logoutUser,
+    setUser,
+    clearUser,
     updateUserProfile,
     updateUserProfileStyle,
     updateUserNickname,
