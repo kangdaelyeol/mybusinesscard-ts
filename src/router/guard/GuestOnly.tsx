@@ -1,14 +1,19 @@
-import { useEffect } from 'react'
+import { useEffect, ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { userClient } from '@/client'
+import { cardClient, userClient } from '@/client'
 import { initCards } from '@/store/cardsSlice'
-import { loginUser } from '@/store/userSlice'
+import { setUser } from '@/store/userSlice'
 import { LOCALSTORAGE_TOKEN_NAME } from '@/constants'
+import { AppDispatch, RootState } from '@/store'
 
-export default function GuestOnly({ children }) {
-    const userState = useSelector((state) => state.user)
-    const dispatch = useDispatch()
+interface GuestOnlyProps {
+    children: ReactNode
+}
+
+export default function GuestOnly({ children }: GuestOnlyProps) {
+    const userState = useSelector((state: RootState) => state.user)
+    const dispatch = useDispatch<AppDispatch>()
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -26,13 +31,30 @@ export default function GuestOnly({ children }) {
                 return
             }
 
-            const res = await userClient.get(storageUsername)
+            const getUserRes = await userClient.get(storageUsername)
+            if (getUserRes.status === 200 && 'data' in getUserRes) {
+                const { username, nickname, profile } = getUserRes.data
+                const getCardListRes = await cardClient.getList(username)
 
-            const { username, nickname, profile, cards } = res.data
-
-            dispatch(loginUser({ username, nickname, profile }))
-            dispatch(initCards({ cards }))
-            navigate('/')
+                if (getCardListRes.status === 200 && 'data' in getCardListRes) {
+                    dispatch(setUser({ username, nickname, profile }))
+                    dispatch(initCards({ cards: getCardListRes.data }))
+                    return navigate('/')
+                } else if (
+                    getCardListRes.status === 400 &&
+                    'reason' in getCardListRes
+                ) {
+                    console.error(
+                        `Unexpected Error in requesting card list - ${getCardListRes.reason}`,
+                    )
+                    localStorage.removeItem(LOCALSTORAGE_TOKEN_NAME)
+                }
+            } else if (getUserRes.status === 400 && 'reason' in getUserRes) {
+                console.error(
+                    `Unexpected Error in verifying user - ${getUserRes.reason}`,
+                )
+                localStorage.removeItem(LOCALSTORAGE_TOKEN_NAME)
+            }
         })()
     }, [userState])
 

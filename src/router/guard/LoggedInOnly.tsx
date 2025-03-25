@@ -1,17 +1,22 @@
-import { useEffect } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { userClient } from '@/client'
+import { cardClient, userClient } from '@/client'
 import { initCards } from '@/store/cardsSlice'
-import { loginUser } from '@/store/userSlice'
+import { setUser } from '@/store/userSlice'
 import { LOCALSTORAGE_TOKEN_NAME } from '@/constants'
+import { AppDispatch, RootState } from '@/store'
 
-export default function LoggedInOnly({ children }) {
-    const userState = useSelector((state) => state.user)
+interface LoggedInOnlyProps {
+    children: ReactNode
+}
+
+export default function LoggedInOnly({ children }: LoggedInOnlyProps) {
+    const userState = useSelector((state: RootState) => state.user)
 
     const navigate = useNavigate()
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<AppDispatch>()
 
     useEffect(() => {
         ;(async () => {
@@ -26,12 +31,36 @@ export default function LoggedInOnly({ children }) {
                 return
             }
 
-            const res = await userClient.get(storageUsername)
+            const getUserRes = await userClient.get(storageUsername)
 
-            const { username, profile, nickname, cards } = res.data
+            if (getUserRes.status === 200 && 'data' in getUserRes) {
+                const { username, profile, nickname } = getUserRes.data
 
-            dispatch(loginUser({ username, profile, nickname }))
-            dispatch(initCards({ cards }))
+                const getCardListRes = await cardClient.getList(username)
+
+                if (getCardListRes.status === 200 && 'data' in getCardListRes) {
+                    dispatch(setUser({ username, profile, nickname }))
+                    dispatch(initCards({ cards: getCardListRes.data }))
+                    return
+                } else if (
+                    getCardListRes.status === 400 &&
+                    'reason' in getCardListRes
+                ) {
+                    console.error(
+                        `Unexpected Error in requesting cards - ${getCardListRes.reason}`,
+                    )
+                    localStorage.removeItem(storageUsername)
+                    navigate('/')
+                    return
+                }
+            } else if (getUserRes.status === 400 && 'reason' in getUserRes) {
+                console.error(
+                    `Unexpected Error in verifying user - ${getUserRes.reason}`,
+                )
+                localStorage.removeItem(storageUsername)
+                navigate('/')
+                return
+            }
         })()
     }, [])
 
