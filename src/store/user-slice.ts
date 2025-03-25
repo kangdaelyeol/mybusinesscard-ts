@@ -30,20 +30,29 @@ const userSlice = createSlice({
 
         updateUserProfile: (
             state: User,
-            action: PayloadAction<UserProfile>,
+            action: PayloadAction<{ profile: UserProfile }>,
         ) => {
-            state.profile = action.payload
+            const { profile } = action.payload
+
+            state.profile = profile
         },
 
         updateUserProfileStyle: (
             state: User,
-            action: PayloadAction<UserProfileStyle>,
+            action: PayloadAction<{ style: UserProfileStyle }>,
         ) => {
-            state.profile.style = action.payload
+            const { style } = action.payload
+
+            state.profile.style = style
         },
 
-        updateUserNickname: (state: User, action: PayloadAction<string>) => {
-            state.nickname = action.payload
+        updateUserNickname: (
+            state: User,
+            action: PayloadAction<{ nickname: string }>,
+        ) => {
+            const { nickname } = action.payload
+
+            state.nickname = nickname
         },
     },
 })
