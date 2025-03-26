@@ -43,9 +43,9 @@ export const PubSubProvider = ({ children }: ContextProps) => {
             if (!subscribersMap[topic]) return
 
             setSubscribersMap((prev) => {
-                const handlerList = (
-                    prev[topic] as SubscribersMapType[T]
-                )?.filter((item) => item !== handler)
+                const handlerList = prev[topic]
+                    ? prev[topic].filter((item) => item !== handler)
+                    : []
 
                 return {
                     ...prev,
