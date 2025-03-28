@@ -1,16 +1,17 @@
 import { createContext, useState } from 'react'
 import { TOAST_MESSAGE_TIMER } from '@/constants'
+import { ContextProps, ToasterMessageContextType } from '@/context/types'
 
-export const ToasterMessageContext = createContext({
+export const ToasterMessageContext = createContext<ToasterMessageContextType>({
     toasterMessage: '',
     setToasterMessageTimeOut: () => {},
 })
 
-export const ToasterMessageProvider = ({ children }) => {
-    const [toasterMessage, setToasterMessage] = useState('')
-    const [timerId, setTimerId] = useState(null)
+export const ToasterMessageProvider = ({ children }: ContextProps) => {
+    const [toasterMessage, setToasterMessage] = useState<string>('')
+    const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null)
 
-    const setToasterMessageTimeOut = (message) => {
+    const setToasterMessageTimeOut = (message: string) => {
         if (timerId) clearTimeout(timerId)
 
         const id = setTimeout(() => {

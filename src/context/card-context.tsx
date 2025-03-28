@@ -1,13 +1,14 @@
 import { createContext, useReducer } from 'react'
+import { CardContextType, ContextProps } from '@/context/types'
 import { cardReducer } from '@/reducer'
-import { cardFactory } from '@/factory'
+import { cardFactory } from '@/models'
 
-export const CardContext = createContext({
-    state: cardFactory.createCard(),
-    dispatch: () => {},
+export const CardContext = createContext<CardContextType>({
+    cardState: cardFactory.createCard(),
+    cardDispatch: () => {},
 })
 
-export const CardProvider = ({ children }) => {
+export const CardProvider = ({ children }: ContextProps) => {
     const [cardState, cardDispatch] = useReducer(
         cardReducer,
         cardFactory.createCard(),

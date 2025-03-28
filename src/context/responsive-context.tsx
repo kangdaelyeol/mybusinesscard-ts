@@ -5,14 +5,15 @@ import {
     RATE_BAR_WIDTH,
     RATE_BAR_WIDTH_MEDIUM,
 } from '@/constants'
+import { ContextProps, ResponsiveContextType } from '@/context/types'
 import { throttle } from 'lodash'
 
-export const ResponsiveContext = createContext({
+export const ResponsiveContext = createContext<ResponsiveContextType>({
     barWidth: RATE_BAR_WIDTH,
     pictureSize: PICTURE_BOX_SIZE,
 })
 
-export const ResponsiveProvider = ({ children }) => {
+export const ResponsiveProvider = ({ children }: ContextProps) => {
     const [responsive, setResponsive] = useState({
         barWidth: RATE_BAR_WIDTH,
         pictureSize: PICTURE_BOX_SIZE,
