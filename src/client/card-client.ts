@@ -1,5 +1,5 @@
 import { Card, CardProfile, CardStyle } from '@/models'
-import { db } from '@/service/firebase'
+import { db } from '@/config/firebase'
 import {
     ref,
     set,
