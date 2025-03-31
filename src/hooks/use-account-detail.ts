@@ -9,11 +9,12 @@ import {
     updateUserProfileStyle,
 } from '@/store/user-slice'
 import { clearCards } from '@/store/cards-slice'
-import { imageClient, userClient } from '@/client'
+import { userClient } from '@/client'
 import { userFactory, UserProfileStyle } from '@/models'
 import { PubSubContext, ToasterMessageContext } from '@/context'
 import { LOCALSTORAGE_TOKEN_NAME } from '@/constants'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
+import { cloudinaryService } from '@/services'
 
 export const useAccountDetail = () => {
     const { publish, subscribe, unSubscribe } = useContext(PubSubContext)
@@ -95,58 +96,59 @@ export const useAccountDetail = () => {
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             setFileLoading(true)
 
-            const cloudinaryRes = await imageClient.uploadInCloudinary(
+            const uploadedImage = await cloudinaryService.uploadImage(
                 e.target.files[0],
             )
 
-            if (cloudinaryRes.status === 200 && 'data' in cloudinaryRes) {
-                const { url, asset_id, public_id, width, height } =
-                    cloudinaryRes.data
-
-                const newProfile = userFactory.createUserProfile({
-                    url,
-                    assetId: asset_id,
-                    publicId: public_id,
-                    style: {
-                        width,
-                        height,
-                    },
-                })
-                const firebaseRes = await userClient.updateProfile(
-                    userState.username,
-                    newProfile,
-                )
-
-                if (firebaseRes.status !== 200 && 'reason' in firebaseRes) {
-                    imageClient.deleteInCloudinary(
-                        newProfile.assetId,
-                        newProfile.publicId,
-                    )
-                    setToasterMessageTimeOut(
-                        `Unexpected Error: ${firebaseRes.reason}`,
-                    )
-
-                    setFileLoading(false)
-                    return
-                }
-
-                if (userState.profile.assetId) {
-                    imageClient.deleteInCloudinary(
-                        userState.profile.assetId,
-                        userState.profile.publicId,
-                    )
-                }
-
-                dispatch(updateUserProfile({ profile: newProfile }))
-                setFileLoading(false)
-                setToasterMessageTimeOut(
-                    'Your account image has been updated successfully!!',
-                )
-                setProfileStyling(true)
-            } else if (cloudinaryRes.status !== 200) {
+            if (!uploadedImage) {
+                setToasterMessageTimeOut('Failed to upload image')
                 setFileLoading(false)
                 return
             }
+
+            const { url, asset_id, public_id, width, height } = uploadedImage
+
+            const newProfile = userFactory.createUserProfile({
+                url,
+                assetId: asset_id,
+                publicId: public_id,
+                style: {
+                    width,
+                    height,
+                },
+            })
+
+            const firebaseRes = await userClient.updateProfile(
+                userState.username,
+                newProfile,
+            )
+
+            if (firebaseRes.status !== 200 && 'reason' in firebaseRes) {
+                cloudinaryService.deleteImage(
+                    newProfile.assetId,
+                    newProfile.publicId,
+                )
+                setToasterMessageTimeOut(
+                    `Unexpected Error: ${firebaseRes.reason}`,
+                )
+
+                setFileLoading(false)
+                return
+            }
+
+            if (userState.profile.assetId) {
+                cloudinaryService.deleteImage(
+                    userState.profile.assetId,
+                    userState.profile.publicId,
+                )
+            }
+
+            dispatch(updateUserProfile({ profile: newProfile }))
+            setFileLoading(false)
+            setToasterMessageTimeOut(
+                'Your account image has been updated successfully!!',
+            )
+            setProfileStyling(true)
         },
 
         saveButtonClick: async () => {
@@ -196,7 +198,7 @@ export const useAccountDetail = () => {
 
             await Promise.allSettled(
                 cards.map((card) => {
-                    return imageClient.deleteInCloudinary(
+                    return cloudinaryService.deleteImage(
                         card.profile.assetId,
                         card.profile.publicId,
                     )

@@ -1,7 +1,7 @@
 import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { imageClient, userClient } from '@/client'
+import { userClient } from '@/client'
 import { userFactory, UserProfileStyle } from '@/models'
 import { LOCALSTORAGE_TOKEN_NAME } from '@/constants'
 import { PubSubContext, ToasterMessageContext } from '@/context'
@@ -13,6 +13,7 @@ import {
 } from '@/store/user-slice'
 import { RootState } from '@/store'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
+import { cloudinaryService } from '@/services'
 
 export const useProfileDetail = () => {
     const { subscribe, unSubscribe, publish } = useContext(PubSubContext)
@@ -73,63 +74,54 @@ export const useProfileDetail = () => {
             if (!e.target.files || e.target.files.length === 0) return
 
             setFileLoading(true)
-            const uploadImageRes = await imageClient.uploadInCloudinary(
+            const uploadedImage = await cloudinaryService.uploadImage(
                 e.target.files[0],
             )
 
-            if (uploadImageRes.status === 200 && 'data' in uploadImageRes) {
-                const { url, asset_id, public_id, width, height } =
-                    uploadImageRes.data
-
-                const newProfile = userFactory.createUserProfile({
-                    url,
-                    assetId: asset_id,
-                    publicId: public_id,
-                    style: {
-                        width,
-                        height,
-                    },
-                })
-
-                const firebaseRes = await userClient.updateProfile(
-                    userState.username,
-                    newProfile,
-                )
-
-                if (firebaseRes.status !== 200 && 'reason' in firebaseRes) {
-                    console.error(
-                        'Error - uploadInFirebase: ',
-                        firebaseRes.reason,
-                    )
-                    await imageClient.deleteInCloudinary(
-                        newProfile.assetId,
-                        newProfile.publicId,
-                    )
-                    setFileLoading(false)
-                    return
-                }
-
-                if (userState.profile.url) {
-                    await imageClient.deleteInCloudinary(
-                        userState.profile.assetId,
-                        userState.profile.publicId,
-                    )
-                }
-
-                dispatch(updateUserProfile({ profile: newProfile }))
-
+            if (!uploadedImage) {
+                setToasterMessageTimeOut('Failed to upload image')
                 setFileLoading(false)
-                setImageStyling(true)
-            } else if (
-                uploadImageRes.status !== 200 &&
-                'reason' in uploadImageRes
-            ) {
-                console.error(
-                    `Error - UploadCloudinaryImage: ${uploadImageRes.reason}`,
+                return
+            }
+
+            const { url, asset_id, public_id, width, height } = uploadedImage
+
+            const newProfile = userFactory.createUserProfile({
+                url,
+                assetId: asset_id,
+                publicId: public_id,
+                style: {
+                    width,
+                    height,
+                },
+            })
+
+            const firebaseRes = await userClient.updateProfile(
+                userState.username,
+                newProfile,
+            )
+
+            if (firebaseRes.status !== 200 && 'reason' in firebaseRes) {
+                console.error('Error - uploadInFirebase: ', firebaseRes.reason)
+                cloudinaryService.deleteImage(
+                    newProfile.assetId,
+                    newProfile.publicId,
                 )
                 setFileLoading(false)
                 return
             }
+
+            if (userState.profile.assetId) {
+                cloudinaryService.deleteImage(
+                    userState.profile.assetId,
+                    userState.profile.publicId,
+                )
+            }
+
+            dispatch(updateUserProfile({ profile: newProfile }))
+
+            setFileLoading(false)
+            setImageStyling(true)
         },
 
         newFileClick: () => {

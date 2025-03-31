@@ -1,11 +1,12 @@
 import { ChangeEvent, useContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { CARD_ACTIONS } from '@/reducer'
-import { cardClient, imageClient } from '@/client'
+import { cardClient } from '@/client'
 import { createCard } from '@/store/cards-slice'
 import { cardFactory, CardTheme } from '@/models'
 import { CardContext, ToasterMessageContext, PubSubContext } from '@/context'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
+import { cloudinaryService } from '@/services'
 
 export const useCardMaker = () => {
     const { publish } = useContext(PubSubContext)
@@ -46,48 +47,43 @@ export const useCardMaker = () => {
 
             setFileLoading(true)
 
-            const uploadInCloudinaryRes = await imageClient.uploadInCloudinary(
+            const uploadedImage = await cloudinaryService.uploadImage(
                 e.target.files[0],
             )
 
-            if (
-                uploadInCloudinaryRes.status !== 200 &&
-                'reason' in uploadInCloudinaryRes
-            ) {
-                console.error(
-                    `Error - uploadInClodinary: ${uploadInCloudinaryRes.reason}`,
-                )
+            if (!uploadedImage) {
                 setFileLoading(false)
+                setToasterMessageTimeOut('Error - Failed to upload image')
                 return
             }
 
-            if (cardState.profile.assetId)
-                imageClient.deleteInCloudinary(
+            if (cardState.profile.assetId) {
+                const deleteImageRes = await cloudinaryService.deleteImage(
                     cardState.profile.assetId,
                     cardState.profile.publicId,
                 )
 
-            if (
-                uploadInCloudinaryRes.status === 200 &&
-                'data' in uploadInCloudinaryRes
-            ) {
-                const { url, asset_id, public_id, width, height } =
-                    uploadInCloudinaryRes.data
-                cardDispatch({
-                    type: CARD_ACTIONS.UPDATE_PROFILE,
-                    payload: {
-                        profile: cardFactory.createCardProfile({
-                            url,
-                            assetId: asset_id,
-                            publicId: public_id,
-                            style: {
-                                width,
-                                height,
-                            },
-                        }),
-                    },
-                })
+                if (deleteImageRes === false) {
+                    setToasterMessageTimeOut('Error - Failed to delete image')
+                }
             }
+
+            const { url, asset_id, public_id, width, height } = uploadedImage
+
+            cardDispatch({
+                type: CARD_ACTIONS.UPDATE_PROFILE,
+                payload: {
+                    profile: cardFactory.createCardProfile({
+                        url,
+                        assetId: asset_id,
+                        publicId: public_id,
+                        style: {
+                            width,
+                            height,
+                        },
+                    }),
+                },
+            })
 
             setFileLoading(false)
         },
