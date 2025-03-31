@@ -1,7 +1,7 @@
 import { db } from '@/service/firebase'
 import { ref, get, child, set } from 'firebase/database'
 import { validation } from './validate'
-import { AuthClientResponse, AuthGetResponse } from './types/auth-client'
+import { AuthClientResponse, AuthGetResponse } from '@/client/types'
 
 export const authClient = {
     signIn: async (

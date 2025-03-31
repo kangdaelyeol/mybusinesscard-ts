@@ -1,4 +1,4 @@
-import { Card, CardProfile, CardStyle } from '@/models/card-model'
+import { Card, CardProfile, CardStyle } from '@/models'
 import { db } from '@/service/firebase'
 import {
     ref,

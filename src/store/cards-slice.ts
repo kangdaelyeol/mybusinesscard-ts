@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { Card, CardProfile, CardTheme } from '@/models'
+import { Card, CardProfile, CardStyle, CardTheme } from '@/models'
 
 type CardListState = Card[]
 
@@ -83,7 +83,7 @@ const cardsSlice = createSlice({
 
         updateCardProfileStyle: (
             state,
-            action: PayloadAction<{ id: string; value: CardProfile }>,
+            action: PayloadAction<{ id: string; value: CardStyle }>,
         ) => {
             const { id, value } = action.payload
 

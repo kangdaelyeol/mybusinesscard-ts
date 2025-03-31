@@ -27,7 +27,7 @@ export interface PubSubContextType {
         topic: T,
         handler: SubscribeHandlerType<T>,
     ) => void
-    publish: <T extends TopicType>(topic: T, data: PublishParamType<T>) => void
+    publish: <T extends TopicType>(topic: T, data?: PublishParamType<T>) => void
     unSubscribe: <T extends TopicType>(
         topic: T,
         handler: SubscribeHandlerType<T>,
