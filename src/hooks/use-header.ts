@@ -1,22 +1,28 @@
 import { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { PubSubContext, EVENT_TYPES } from '@/context'
-export default function useHeader() {
+import { PubSubContext } from '@/context'
+import { RootState } from '@/store'
+import { PUBSUB_EVENT_TYPES } from '@/context/types'
+
+export const useHeader = () => {
     const { subscribe, unSubscribe, publish } = useContext(PubSubContext)
 
-    const userState = useSelector((state) => state.user)
+    const userState = useSelector((state: RootState) => state.user)
 
-    const [profileDetail, setProfileDetail] = useState(false)
+    const [profileDetail, setProfileDetail] = useState<boolean>(false)
 
     useEffect(() => {
         const hideProfileDetail = () => {
             setProfileDetail(false)
         }
 
-        subscribe(EVENT_TYPES.HIDE_PROFILE_DETAIL, hideProfileDetail)
+        subscribe(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL, hideProfileDetail)
         return () => {
-            unSubscribe(EVENT_TYPES.HIDE_PROFILE_DETAIL, hideProfileDetail)
+            unSubscribe(
+                PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL,
+                hideProfileDetail,
+            )
         }
     }, [])
 
@@ -29,7 +35,7 @@ export default function useHeader() {
 
     const handleTitleClick = () => {
         navigate('/')
-        publish(EVENT_TYPES.HIDE_PROFILE_DETAIL)
+        publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
     }
 
     return {

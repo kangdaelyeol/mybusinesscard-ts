@@ -1,12 +1,18 @@
-import { useState, useEffect } from 'react'
+import {
+    useState,
+    useEffect,
+    Dispatch,
+    SetStateAction,
+    MouseEvent,
+} from 'react'
 
-export default function useSettingBar(
-    minVal,
-    maxVal,
-    setRate,
-    value,
-    barWidth,
-) {
+export const useSettingBar = (
+    minVal: number,
+    maxVal: number,
+    setRate: Dispatch<SetStateAction<number>>,
+    value: number,
+    barWidth: number,
+) => {
     useEffect(() => {
         const rate =
             minVal + ((maxVal - minVal) * (value - minVal)) / (maxVal - minVal)
@@ -19,7 +25,7 @@ export default function useSettingBar(
 
     const [mouseDown, setMouseDown] = useState(false)
 
-    const handleBarMove = (e) => {
+    const handleBarMove = (e: MouseEvent) => {
         if (!mouseDown) return
         const rate =
             (maxVal - minVal) * (e.nativeEvent.offsetX / barWidth) + minVal

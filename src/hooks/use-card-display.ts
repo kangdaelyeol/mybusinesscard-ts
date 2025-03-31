@@ -1,34 +1,34 @@
 import { useContext, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { updateCardProfileStyle } from '@/store/cardsSlice'
-import { CARD_ACTIONS } from '@/reducer'
+import { useDispatch } from 'react-redux'
 import { cardClient } from '@/client'
-import { EVENT_TYPES, PubSubContext, CardContext } from '@/context'
+import { Card, CardStyle } from '@/models'
+import { CARD_ACTIONS } from '@/reducer'
+import { PubSubContext, CardContext } from '@/context'
+import { PUBSUB_EVENT_TYPES } from '@/context/types'
+import { updateCardProfileStyle } from '@/store/cards-slice'
 
-export default function useCardDisplay(card) {
+export const useCardDisplay = (card?: Card) => {
     const { subscribe, unSubscribe } = useContext(PubSubContext)
 
-    const userState = useSelector((state) => state.user)
-
-    const [editPicture, setEditPicture] = useState(false)
+    const [editPicture, setEditPicture] = useState<boolean>(false)
 
     useEffect(() => {
         const hideEditPicture = () => {
             setEditPicture(false)
         }
 
-        subscribe(EVENT_TYPES.HIDE_IMAGE_STYLING, hideEditPicture)
+        subscribe(PUBSUB_EVENT_TYPES.HIDE_IMAGE_STYLING, hideEditPicture)
         return () => {
-            unSubscribe(EVENT_TYPES.HIDE_IMAGE_STYLING, hideEditPicture)
+            unSubscribe(PUBSUB_EVENT_TYPES.HIDE_IMAGE_STYLING, hideEditPicture)
         }
     }, [])
 
-    let data, saveProfileStyle
+    let data: Card, saveProfileStyle
 
     if (!card) {
         const { cardState, cardDispatch } = useContext(CardContext)
         data = cardState
-        saveProfileStyle = (style) => {
+        saveProfileStyle = (style: CardStyle) => {
             cardDispatch({
                 type: CARD_ACTIONS.UPDATE_PROFILE_STYLE,
                 payload: { style },
@@ -38,9 +38,9 @@ export default function useCardDisplay(card) {
     } else {
         data = card
         const dispatch = useDispatch()
-        saveProfileStyle = (style) => {
+        saveProfileStyle = (style: CardStyle) => {
             dispatch(updateCardProfileStyle({ id: data.id, value: style }))
-            cardClient.updateProfileStyle(userState.username, data.id, style)
+            cardClient.updateProfileStyle(data.id, style)
             setEditPicture(false)
         }
     }

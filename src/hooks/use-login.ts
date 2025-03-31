@@ -1,13 +1,13 @@
-import { useContext, useState } from 'react'
+import { ChangeEvent, useContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { authClient } from '@/client'
+import { authClient, cardClient } from '@/client'
 import { LOCALSTORAGE_TOKEN_NAME } from '@/constants'
 import { ToasterMessageContext } from '@/context'
-import { initCards } from '@/store/cardsSlice'
-import { loginUser } from '@/store/userSlice'
+import { initCards } from '@/store/cards-slice'
+import { setUser } from '@/store/user-slice'
 
-export default function useLogin() {
+export const useLogin = () => {
     const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
 
     const dispatch = useDispatch()
@@ -23,37 +23,46 @@ export default function useLogin() {
     const navigate = useNavigate()
 
     const handlers = {
-        userLogin: async (e) => {
+        userLogin: async (e: Event) => {
             e.preventDefault()
             if (loading) return
 
             setLoading(true)
 
-            const res = await authClient.signIn(
+            const signInRes = await authClient.signIn(
                 loginInput.username,
                 loginInput.password,
             )
 
-            if (res.status === 200) {
-                const { username, profile, cards = [], nickname } = res.data
+            if (signInRes.status === 200 && 'data' in signInRes) {
+                const { username, profile, nickname } = signInRes.data
                 if (loginInput.remember)
                     localStorage.setItem(LOCALSTORAGE_TOKEN_NAME, username)
-                dispatch(loginUser({ username, profile, nickname }))
-                dispatch(initCards({ cards }))
-                setToasterMessageTimeOut('Logged in successfully!!')
-                navigate('/')
-            } else if (res.status === 400) {
-                setErrorMessage(res.reason)
+
+                const getCardListRes = await cardClient.getList(username)
+                if (getCardListRes.status === 200 && 'data' in getCardListRes) {
+                    dispatch(setUser({ username, profile, nickname }))
+                    dispatch(initCards({ cards: getCardListRes.data }))
+                    setToasterMessageTimeOut('Logged in successfully!!')
+                    navigate('/')
+                } else if (
+                    getCardListRes.status !== 200 &&
+                    'reason' in getCardListRes
+                ) {
+                    setErrorMessage(getCardListRes.reason)
+                }
+            } else if (signInRes.status !== 200 && 'reason' in signInRes) {
+                setErrorMessage(signInRes.reason)
             }
             setLoading(false)
         },
 
-        usernameInput: (e) => {
+        usernameInput: (e: ChangeEvent<HTMLInputElement>) => {
             setErrorMessage('')
             setLoginInput((prev) => ({ ...prev, username: e.target.value }))
         },
 
-        passwordInput: (e) => {
+        passwordInput: (e: ChangeEvent<HTMLInputElement>) => {
             setErrorMessage('')
             setLoginInput((prev) => ({ ...prev, password: e.target.value }))
         },

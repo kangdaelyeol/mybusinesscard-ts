@@ -1,10 +1,10 @@
-import { useContext, useState } from 'react'
+import { ChangeEvent, useContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { userClient } from '@/client'
 import { LOCALSTORAGE_TOKEN_NAME } from '@/constants'
 import { ToasterMessageContext } from '@/context'
-import { initCards } from '@/store/cardsSlice'
-import { loginUser } from '@/store/userSlice'
+import { initCards } from '@/store/cards-slice'
+import { setUser } from '@/store/user-slice'
 
 export default function useSignup() {
     const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
@@ -21,17 +21,17 @@ export default function useSignup() {
     })
 
     const handlers = {
-        usernameChange: (e) => {
+        usernameChange: (e: ChangeEvent<HTMLInputElement>) => {
             setErrorMessage('')
             setSignupInput((prev) => ({ ...prev, username: e.target.value }))
         },
 
-        passwordChange: (e) => {
+        passwordChange: (e: ChangeEvent<HTMLInputElement>) => {
             setErrorMessage('')
             setSignupInput((prev) => ({ ...prev, password: e.target.value }))
         },
 
-        confirmPasswordChange: (e) => {
+        confirmPasswordChange: (e: ChangeEvent<HTMLInputElement>) => {
             setErrorMessage('')
             setSignupInput((prev) => ({
                 ...prev,
@@ -39,34 +39,37 @@ export default function useSignup() {
             }))
         },
 
-        nicknameChange: (e) => {
+        nicknameChange: (e: ChangeEvent<HTMLInputElement>) => {
             setErrorMessage('')
             setSignupInput((prev) => ({ ...prev, nickname: e.target.value }))
         },
 
-        signupSubmit: async (e) => {
+        signupSubmit: async (e: Event) => {
             e.preventDefault()
             setLoading(true)
             const { username, password, confirmPassword, nickname } =
                 signupInput
 
-            const res = await userClient.create(
+            const createUserRes = await userClient.create(
                 username,
                 nickname,
                 password,
                 confirmPassword,
             )
 
-            if (res.status === 200) {
-                const { username, profile, cards, nickname } = res.value
+            if (createUserRes.status === 200 && 'data' in createUserRes) {
+                const { username, profile, nickname } = createUserRes.data
 
                 localStorage.setItem(LOCALSTORAGE_TOKEN_NAME, username)
 
-                dispatch(loginUser({ username, profile, nickname }))
-                dispatch(initCards({ cards }))
+                dispatch(setUser({ username, profile, nickname }))
+                dispatch(initCards({ cards: [] }))
                 setToasterMessageTimeOut('Sign up sucessfully!!')
-            } else {
-                setErrorMessage(res.reason)
+            } else if (
+                createUserRes.status !== 200 &&
+                'reason' in createUserRes
+            ) {
+                setErrorMessage(createUserRes.reason)
                 setLoading(false)
             }
             setLoading(false)

@@ -1,24 +1,29 @@
-import { useContext, useState } from 'react'
-import { EVENT_TYPES, PubSubContext } from '@/context'
+import { Dispatch, useContext, useState } from 'react'
+import { PubSubContext } from '@/context'
+import { PUBSUB_EVENT_TYPES } from '@/context/types'
+import { CardStyle, UserProfileStyle } from '@/models'
 
-export default function useAvatarSizing(style, saveProfileStyle) {
+export const useAvatarSizing = (
+    style: UserProfileStyle | CardStyle,
+    saveProfileStyle: Dispatch<UserProfileStyle | CardStyle>,
+) => {
     const { publish } = useContext(PubSubContext)
 
     const [imgStyle, setStyle] = useState({ ...style })
 
-    const setScaleRate = (value) => {
+    const setScaleRate = (value: number) => {
         setStyle((prev) => ({ ...prev, scale: value }))
     }
 
-    const setRoundedRate = (value) => {
+    const setRoundedRate = (value: number) => {
         setStyle((prev) => ({ ...prev, rounded: value }))
     }
 
-    const setTransXRate = (value) => {
+    const setTransXRate = (value: number) => {
         setStyle((prev) => ({ ...prev, transX: value }))
     }
 
-    const setTransYRate = (value) => {
+    const setTransYRate = (value: number) => {
         setStyle((prev) => ({ ...prev, transY: value }))
     }
 
@@ -29,7 +34,7 @@ export default function useAvatarSizing(style, saveProfileStyle) {
     }
 
     const handleExitClick = () => {
-        publish(EVENT_TYPES.HIDE_IMAGE_STYLING)
+        publish(PUBSUB_EVENT_TYPES.HIDE_IMAGE_STYLING)
     }
 
     return {
