@@ -1,6 +1,6 @@
-import { ValidationResponse } from '@/client/validate/types'
+import { ValidationResponse } from '@/services/validate/types'
 
-export const validation = {
+export const userValidator = {
     username: (username: string): ValidationResponse => {
         if (!/^[A-Za-z0-9_-]{4,20}$/.test(username)) {
             return {
