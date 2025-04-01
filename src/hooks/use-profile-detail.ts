@@ -1,7 +1,6 @@
 import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { userClient } from '@/client'
 import { userFactory, UserProfileStyle } from '@/models'
 import { LOCALSTORAGE_TOKEN_NAME } from '@/constants'
 import { PubSubContext, ToasterMessageContext } from '@/context'
@@ -13,7 +12,7 @@ import {
 } from '@/store/user-slice'
 import { RootState } from '@/store'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
-import { cloudinaryService } from '@/services'
+import { cloudinaryService, userService } from '@/services'
 
 export const useProfileDetail = () => {
     const { subscribe, unSubscribe, publish } = useContext(PubSubContext)
@@ -40,21 +39,17 @@ export const useProfileDetail = () => {
     }, [])
 
     const saveProfileStyle = async (style: UserProfileStyle) => {
-        const updateProfileStyleRes = await userClient.updateProfileStyle(
+        const updatedProfileStyle = await userService.updateProfileStyle(
             userState.username,
             style,
         )
-        if (
-            updateProfileStyleRes.status !== 200 &&
-            'reason' in updateProfileStyleRes
-        ) {
-            console.error(
-                `Error - updateUserProfileStyle: ${updateProfileStyleRes.reason}`,
-            )
+        if (!updatedProfileStyle) {
+            setToasterMessageTimeOut('Failed to update Profile style')
             setImageStyling(false)
             setImageOption(false)
             return
         }
+
         setToasterMessageTimeOut('Profile style has changed successfully!!')
         dispatch(updateUserProfileStyle({ style }))
         setImageStyling(false)
@@ -96,13 +91,13 @@ export const useProfileDetail = () => {
                 },
             })
 
-            const firebaseRes = await userClient.updateProfile(
+            const updatedProfile = await userService.updateProfile(
                 userState.username,
                 newProfile,
             )
 
-            if (firebaseRes.status !== 200 && 'reason' in firebaseRes) {
-                console.error('Error - uploadInFirebase: ', firebaseRes.reason)
+            if (!updatedProfile) {
+                setToasterMessageTimeOut('Failed to update Profile')
                 cloudinaryService.deleteImage(
                     newProfile.assetId,
                     newProfile.publicId,
@@ -118,7 +113,7 @@ export const useProfileDetail = () => {
                 )
             }
 
-            dispatch(updateUserProfile({ profile: newProfile }))
+            dispatch(updateUserProfile({ profile: updatedProfile }))
 
             setFileLoading(false)
             setImageStyling(true)

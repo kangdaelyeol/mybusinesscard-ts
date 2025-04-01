@@ -1,7 +1,6 @@
 import { ref, set, get, remove } from 'firebase/database'
 import { db } from '@/config/firebase'
 import { User, userFactory, UserProfile, UserProfileStyle } from '@/models'
-import { validation } from '@/client/validate'
 import { UserClientResponse, UserGetResponse } from '@/client/types'
 
 export const userClient = {
@@ -27,41 +26,7 @@ export const userClient = {
         username: string,
         nickname: string,
         password: string,
-        confirmPassword: string,
     ): Promise<UserGetResponse> => {
-        const validateUsernameRes = validation.username(username)
-
-        if (validateUsernameRes.isValid === false) {
-            return {
-                status: 400,
-                reason: validateUsernameRes.reason,
-            }
-        }
-
-        const validateNicknameRes = validation.nickname(nickname)
-
-        if (validateNicknameRes.isValid === false) {
-            return {
-                status: 400,
-                reason: validateNicknameRes.reason,
-            }
-        }
-
-        const validatePasswordRes = validation.password(password)
-
-        if (validatePasswordRes.isValid === false) {
-            return {
-                status: 400,
-                reason: validatePasswordRes.reason,
-            }
-        }
-
-        if (password !== confirmPassword) {
-            return {
-                status: 400,
-                reason: "Password doesn't match confirm password correctly.\nPlease check your password again",
-            }
-        }
 
         try {
             const userRef = ref(db, `/users/${username}`)
@@ -149,14 +114,7 @@ export const userClient = {
         username: string,
         nickname: string,
     ): Promise<UserClientResponse> => {
-        const validateNicknameRes = validation.nickname(nickname)
-
-        if (validateNicknameRes.isValid === false) {
-            return {
-                status: 400,
-                reason: "Nickname should have 2 to 20 characters, shouldn't contain blank(nbsp) and special symbols.",
-            }
-        }
+        
 
         const userNicknameRef = ref(db, `users/${username}/nickname`)
         try {

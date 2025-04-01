@@ -1,10 +1,10 @@
 import { ChangeEvent, useContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { userClient } from '@/client'
 import { LOCALSTORAGE_TOKEN_NAME } from '@/constants'
 import { ToasterMessageContext } from '@/context'
 import { initCards } from '@/store/cards-slice'
 import { setUser } from '@/store/user-slice'
+import { userService } from '@/services/user-service'
 
 export default function useSignup() {
     const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
@@ -50,14 +50,14 @@ export default function useSignup() {
             const { username, password, confirmPassword, nickname } =
                 signupInput
 
-            const createUserRes = await userClient.create(
+            const createUserRes = await userService.create(
                 username,
                 nickname,
                 password,
                 confirmPassword,
             )
 
-            if (createUserRes.status === 200 && 'data' in createUserRes) {
+            if (createUserRes.ok) {
                 const { username, profile, nickname } = createUserRes.data
 
                 localStorage.setItem(LOCALSTORAGE_TOKEN_NAME, username)
@@ -65,10 +65,7 @@ export default function useSignup() {
                 dispatch(setUser({ username, profile, nickname }))
                 dispatch(initCards({ cards: [] }))
                 setToasterMessageTimeOut('Sign up sucessfully!!')
-            } else if (
-                createUserRes.status !== 200 &&
-                'reason' in createUserRes
-            ) {
+            } else {
                 setErrorMessage(createUserRes.reason)
                 setLoading(false)
             }

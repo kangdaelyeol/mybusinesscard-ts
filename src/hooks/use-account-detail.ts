@@ -9,12 +9,12 @@ import {
     updateUserProfileStyle,
 } from '@/store/user-slice'
 import { clearCards } from '@/store/cards-slice'
-import { userClient } from '@/client'
 import { userFactory, UserProfileStyle } from '@/models'
 import { PubSubContext, ToasterMessageContext } from '@/context'
 import { LOCALSTORAGE_TOKEN_NAME } from '@/constants'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
 import { cloudinaryService } from '@/services'
+import { userService } from '@/services/user-service'
 
 export const useAccountDetail = () => {
     const { publish, subscribe, unSubscribe } = useContext(PubSubContext)
@@ -55,15 +55,18 @@ export const useAccountDetail = () => {
 
     const saveProfileStyle = async (style: UserProfileStyle) => {
         publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
-        const updateProfileRes = await userClient.updateProfileStyle(
+        const updatedProfile = await userService.updateProfileStyle(
             userState.username,
             style,
         )
-        if (updateProfileRes.status !== 200) {
+
+        if (!updatedProfile) {
+            setToasterMessageTimeOut('Failed to update profile')
             setProfileStyling(false)
             setProfileOption(false)
             return
         }
+
         dispatch(updateUserProfileStyle({ style }))
         setProfileStyling(false)
         setProfileOption(false)
@@ -118,20 +121,18 @@ export const useAccountDetail = () => {
                 },
             })
 
-            const firebaseRes = await userClient.updateProfile(
+            const updatedProfile = await userService.updateProfile(
                 userState.username,
                 newProfile,
             )
 
-            if (firebaseRes.status !== 200 && 'reason' in firebaseRes) {
+            if (!updatedProfile) {
                 cloudinaryService.deleteImage(
                     newProfile.assetId,
                     newProfile.publicId,
                 )
-                setToasterMessageTimeOut(
-                    `Unexpected Error: ${firebaseRes.reason}`,
-                )
 
+                setToasterMessageTimeOut('Failed to update profile')
                 setFileLoading(false)
                 return
             }
@@ -146,7 +147,7 @@ export const useAccountDetail = () => {
             dispatch(updateUserProfile({ profile: newProfile }))
             setFileLoading(false)
             setToasterMessageTimeOut(
-                'Your account image has been updated successfully!!',
+                'Your profile has been updated successfully!!',
             )
             setProfileStyling(true)
         },
@@ -155,16 +156,13 @@ export const useAccountDetail = () => {
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             setSaveLoading(true)
 
-            const updateNicknameRes = await userClient.updateNickname(
+            const updatedNickname = await userService.updateNickname(
                 userState.username,
                 nickname,
             )
 
-            if (
-                updateNicknameRes.status !== 200 &&
-                'reason' in updateNicknameRes
-            ) {
-                setErrorMessage(updateNicknameRes.reason)
+            if (!updatedNickname) {
+                setErrorMessage('Failed to update nickname')
                 setSaveLoading(false)
                 return
             }
@@ -194,7 +192,13 @@ export const useAccountDetail = () => {
             if (deleteAccountLoading) return
 
             setDeleteAccountLoading(true)
-            const removeUserRes = await userClient.remove(userState.username)
+            const success = await userService.delete(userState.username)
+
+            if (!success) {
+                setToasterMessageTimeOut('Failed to delete user')
+                setDeleteAccountLoading(false)
+                return
+            }
 
             await Promise.allSettled(
                 cards.map((card) => {
@@ -205,22 +209,12 @@ export const useAccountDetail = () => {
                 }),
             )
 
-            if (removeUserRes.status === 200) {
-                localStorage.removeItem(LOCALSTORAGE_TOKEN_NAME)
-                publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
-                dispatch(clearUser())
-                dispatch(clearCards())
-                setToasterMessageTimeOut('Account is removed successfully!!')
-                navigate('/login')
-            } else if (
-                removeUserRes.status !== 200 &&
-                'reason' in removeUserRes
-            ) {
-                setToasterMessageTimeOut(
-                    `failed - remove account: ${removeUserRes.reason}`,
-                )
-                setDeleteAccountLoading(false)
-            }
+            localStorage.removeItem(LOCALSTORAGE_TOKEN_NAME)
+            publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
+            dispatch(clearUser())
+            dispatch(clearCards())
+            setToasterMessageTimeOut('Account is removed successfully!!')
+            navigate('/login')
         },
     }
 
