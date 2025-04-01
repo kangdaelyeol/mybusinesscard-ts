@@ -6,23 +6,7 @@ export const authClient = {
     signIn: async (
         username: string,
         password: string,
-    ): Promise<AuthGetResponse> => {
-        const validateUsernameRes = validation.username(username)
-        if (validateUsernameRes.isValid === false) {
-            return {
-                status: 400,
-                reason: "username has 4 to 20 length of characters and doesn't contain special symbol.",
-            }
-        }
-
-        const validatePasswordRes = validation.password(password)
-        if (validatePasswordRes.isValid === false) {
-            return {
-                status: 400,
-                reason: "password has 4 to 20 length of characters and doesn't contain blank",
-            }
-        }
-
+    ): Promise<AuthGetResponse> => {        
         try {
             const snapshot = await get(child(ref(db), `/users/${username}`))
 
@@ -34,7 +18,7 @@ export const authClient = {
             if (userData.password !== password)
                 return { status: 400, reason: "password doesn't match!" }
 
-            return { status: 200, data: userData }
+            return { status: 200, token: username }
         } catch (e) {
             console.log(e)
             return { status: 400, reason: 'Failed to request API - signIn' }
@@ -45,22 +29,7 @@ export const authClient = {
         username: string,
         password: string,
         newPassword: string,
-        confirmPassword: string,
     ): Promise<AuthClientResponse> => {
-        const validatePasswordRes = validation.password(password)
-        if (validatePasswordRes.isValid === false) {
-            return {
-                status: 400,
-                reason: "password has 4 to 20 length of characters and doesn't contain blank",
-            }
-        }
-
-        if (newPassword !== confirmPassword) {
-            return {
-                status: 400,
-                reason: "new password doesn't match confirm password",
-            }
-        }
 
         try {
             const userPasswordRef = ref(db, `users/${username}/password`)

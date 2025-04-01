@@ -1,10 +1,10 @@
 import { ChangeEvent, useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { authClient } from '@/client'
 import { ToasterMessageContext, PubSubContext } from '@/context'
 import { RootState } from '@/store'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
+import { authService } from '@/services/auth-service'
 
 export const useChangePassword = () => {
     const { publish } = useContext(PubSubContext)
@@ -45,17 +45,14 @@ export const useChangePassword = () => {
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             setSaveLoading(true)
 
-            const changePasswordRes = await authClient.changePassword(
+            const changePasswordRes = await authService.changePassword(
                 userState.username,
                 passwordState.current,
                 passwordState.new,
                 passwordState.confirm,
             )
 
-            if (
-                changePasswordRes.status !== 200 &&
-                'reason' in changePasswordRes
-            ) {
+            if (!changePasswordRes.ok && 'reason' in changePasswordRes) {
                 setErrorMessage(changePasswordRes.reason)
                 setSaveLoading(false)
                 return
@@ -73,5 +70,3 @@ export const useChangePassword = () => {
 
     return { handlers, saveLoading, errorMessage, passwordState }
 }
-
-

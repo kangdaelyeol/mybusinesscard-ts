@@ -14,6 +14,6 @@ export type AuthClientResponse =
 export type AuthGetResponse =
     | {
           status: number
-          data: User
+          token: string
       }
     | ErrorResponse
