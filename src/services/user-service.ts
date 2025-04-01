@@ -3,9 +3,37 @@ import { UserProfile, UserProfileStyle } from '@/models'
 import { userValidator } from '@/services/validate'
 import {
     CreateUserResponse,
+    GetUserResponse,
     UpdateUserNicknameResponse,
 } from '@/services/types'
 export const userService = {
+    get: async (username: string): Promise<GetUserResponse> => {
+        const validateUsernameRes = userValidator.username(username)
+
+        if (validateUsernameRes.isValid === false) {
+            return {
+                ok: false,
+                reason: validateUsernameRes.reason,
+            }
+        }
+
+        const res = await userClient.get(username)
+
+        if (res.status === 200 && 'data' in res) {
+            return {
+                ok: true,
+                data: res.data,
+            }
+        } else if (res.status === 400 && 'reason' in res) {
+            return {
+                ok: false,
+                reason: res.reason,
+            }
+        } else {
+            throw new Error('Unexpected Error - get User in userservice')
+        }
+    },
+    
     create: async (
         username: string,
         password: string,

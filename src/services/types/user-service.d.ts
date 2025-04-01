@@ -19,3 +19,12 @@ export type UpdateUserNicknameResponse =
           ok: true
           data: string
       }
+export type GetUserResponse =
+    | {
+          ok: false
+          reason: string
+      }
+    | {
+          ok: true
+          data: User
+      }
