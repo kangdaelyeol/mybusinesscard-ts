@@ -5,6 +5,7 @@ import { initCards } from '@/store/cards-slice'
 import { setUser } from '@/store/user-slice'
 import { AppDispatch, RootState } from '@/store'
 import { authHelper } from '@/helpers'
+import { userFacade } from '@/facade'
 
 interface LoggedInOnlyProps {
     children: ReactNode
@@ -28,21 +29,17 @@ export default function LoggedInOnly({ children }: LoggedInOnlyProps) {
                 return
             }
 
-            const user = await authHelper.fetchUser(storageUsername)
+            const getUserWithCardListRes = await userFacade.getUserWithCardList(
+                storageUsername,
+            )
 
-            if (!user) {
+            if (!getUserWithCardListRes.ok) {
                 authHelper.removeLocalStorageUsername()
                 navigate('/login', { replace: true })
                 return
             }
 
-            const cardList = await authHelper.fetchCardList(user.username)
-
-            if (!cardList) {
-                authHelper.removeLocalStorageUsername()
-                navigate('/login', { replace: true })
-                return
-            }
+            const { cardList, user } = getUserWithCardListRes
 
             dispatch(
                 setUser({
