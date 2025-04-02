@@ -1,6 +1,5 @@
 import { ChangeEvent, useContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { cardClient } from '@/client'
 import { ToasterMessageContext, PubSubContext } from '@/context'
 import { Card, cardFactory, CardTheme } from '@/models'
 import {
@@ -11,7 +10,7 @@ import {
     updateCardProfile,
 } from '@/store/cards-slice'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
-import { cloudinaryService } from '@/services'
+import { cardService, cloudinaryService } from '@/services'
 
 export const useCardEditor = (card: Card) => {
     const { publish } = useContext(PubSubContext)
@@ -48,14 +47,15 @@ export const useCardEditor = (card: Card) => {
                 },
             })
 
-            const firebaseRes = await cardClient.updateProfile(
+            const updatedProfile = await cardService.updateProfile(
                 card.id,
                 newProfile,
             )
 
-            if (firebaseRes.status !== 200 && 'reason' in firebaseRes) {
-                console.log('Error - uploadInFirebase: ', firebaseRes.reason)
+            if (!updatedProfile.ok) {
+                setToasterMessageTimeOut('Failed to update profile')
                 cloudinaryService.deleteImage(asset_id, public_id)
+
                 setFileLoading(false)
                 return
             }
@@ -73,13 +73,23 @@ export const useCardEditor = (card: Card) => {
 
         nameChange: (e: ChangeEvent<HTMLInputElement>) => {
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
-            cardClient.updateName(card.id, e.target.value)
+            cardService.updateName(card.id, e.target.value).then((res) => {
+                if (!res.ok)
+                    setToasterMessageTimeOut('Failed to change card name')
+            })
             dispatch(updateCardName({ id: card.id, value: e.target.value }))
         },
 
         descriptionChange: (e: ChangeEvent<HTMLInputElement>) => {
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
-            cardClient.updateDescription(card.id, e.target.value)
+            cardService
+                .updateDescription(card.id, e.target.value)
+                .then((res) => {
+                    if (!res.ok)
+                        setToasterMessageTimeOut(
+                            'Failed to change card description',
+                        )
+                })
             dispatch(
                 updateCardDescription({ id: card.id, value: e.target.value }),
             )
@@ -87,11 +97,15 @@ export const useCardEditor = (card: Card) => {
 
         themeChange: (e: ChangeEvent<HTMLInputElement>) => {
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
-            cardClient.updateTheme(card.id, e.target.value)
+            const theme = e.target.value as CardTheme
+            cardService.updateTheme(card.id, theme).then((res) => {
+                if (!res.ok)
+                    setToasterMessageTimeOut('Failed to change card theme')
+            })
             dispatch(
                 updateCardTheme({
                     id: card.id,
-                    value: e.target.value as CardTheme,
+                    value: theme,
                 }),
             )
         },
@@ -99,7 +113,9 @@ export const useCardEditor = (card: Card) => {
         cardDelete: () => {
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             if (fileLoading) return
-            cardClient.remove(card.id)
+            cardService.delete(card.id).then((res) => {
+                if (!res.ok) setToasterMessageTimeOut('Failed to delete card')
+            })
             dispatch(deleteCard({ id: card.id }))
             setToasterMessageTimeOut('Card has been deleted successfully!!')
         },

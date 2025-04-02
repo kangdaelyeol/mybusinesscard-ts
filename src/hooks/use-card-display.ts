@@ -1,15 +1,15 @@
 import { useContext, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { cardClient } from '@/client'
 import { Card, CardStyle } from '@/models'
 import { CARD_ACTIONS } from '@/reducer'
-import { PubSubContext, CardContext } from '@/context'
+import { PubSubContext, CardContext, ToasterMessageContext } from '@/context'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
 import { updateCardProfileStyle } from '@/store/cards-slice'
+import { cardService } from '@/services'
 
 export const useCardDisplay = (card?: Card) => {
     const { subscribe, unSubscribe } = useContext(PubSubContext)
-
+    const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
     const [editPicture, setEditPicture] = useState<boolean>(false)
 
     useEffect(() => {
@@ -40,7 +40,13 @@ export const useCardDisplay = (card?: Card) => {
         const dispatch = useDispatch()
         saveProfileStyle = (style: CardStyle) => {
             dispatch(updateCardProfileStyle({ id: data.id, value: style }))
-            cardClient.updateProfileStyle(data.id, style)
+            cardService.updateProfileStyle(data.id, style).then((res) => {
+                if (!res.ok) {
+                    setToasterMessageTimeOut(
+                        'Failed to update card profile style',
+                    )
+                }
+            })
             setEditPicture(false)
         }
     }

@@ -1,12 +1,11 @@
 import { ChangeEvent, useContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { CARD_ACTIONS } from '@/reducer'
-import { cardClient } from '@/client'
 import { createCard } from '@/store/cards-slice'
 import { cardFactory, CardTheme } from '@/models'
 import { CardContext, ToasterMessageContext, PubSubContext } from '@/context'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
-import { cloudinaryService } from '@/services'
+import { cardService, cloudinaryService } from '@/services'
 
 export const useCardMaker = () => {
     const { publish } = useContext(PubSubContext)
@@ -98,13 +97,13 @@ export const useCardMaker = () => {
                 id: cardID,
             })
 
-            const createCardRes = await cardClient.create(newCard)
-            if (createCardRes.status !== 200 && 'reason' in createCardRes) {
-                console.error(`Error - setCard: ${createCardRes.reason}`)
+            const createCardRes = await cardService.create(newCard)
+            if (!createCardRes.ok) {
+                setToasterMessageTimeOut('Failed to create card')
                 return
             }
 
-            dispatch(createCard({ card: newCard }))
+            dispatch(createCard({ card: createCardRes.data }))
             cardDispatch({ type: CARD_ACTIONS.CLEAR_CARD })
             setToasterMessageTimeOut('New card has been added successfully!!')
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)

@@ -1,13 +1,12 @@
 import { ChangeEvent, useContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { cardClient } from '@/client'
 import { LOCALSTORAGE_TOKEN_NAME } from '@/constants'
 import { ToasterMessageContext } from '@/context'
 import { initCards } from '@/store/cards-slice'
 import { setUser } from '@/store/user-slice'
 import { authService } from '@/services/auth-service'
-import { userService } from '@/services'
+import { cardService, userService } from '@/services'
 
 export const useLogin = () => {
     const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
@@ -53,20 +52,20 @@ export const useLogin = () => {
 
             const { username, profile, nickname } = getUserRes.data
 
-            const getCardListRes = await cardClient.getList(username)
+            const getCardListRes = await cardService.getList(username)
 
-            if (getCardListRes.status && 'data' in getCardListRes) {
-                dispatch(setUser({ username, profile, nickname }))
-                dispatch(initCards({ cards: getCardListRes.data }))
-                setToasterMessageTimeOut('Logged in successfully!!')
-                setLoading(false)
-                navigate('/')
-            } else if (getCardListRes.status !== 200) {
+            if (!getCardListRes.ok) {
                 setToasterMessageTimeOut('Failed to fetch card info')
                 localStorage.removeItem(LOCALSTORAGE_TOKEN_NAME)
                 setLoading(false)
                 return
             }
+
+            dispatch(setUser({ username, profile, nickname }))
+            dispatch(initCards({ cards: getCardListRes.data }))
+            setToasterMessageTimeOut('Logged in successfully!!')
+            setLoading(false)
+            navigate('/')
         },
 
         usernameInput: (e: ChangeEvent<HTMLInputElement>) => {

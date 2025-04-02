@@ -13,8 +13,7 @@ import { userFactory, UserProfileStyle } from '@/models'
 import { PubSubContext, ToasterMessageContext } from '@/context'
 import { LOCALSTORAGE_TOKEN_NAME } from '@/constants'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
-import { cloudinaryService } from '@/services'
-import { userService } from '@/services/user-service'
+import { cloudinaryService, userService } from '@/services'
 
 export const useAccountDetail = () => {
     const { publish, subscribe, unSubscribe } = useContext(PubSubContext)
