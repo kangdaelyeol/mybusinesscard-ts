@@ -1,13 +1,15 @@
 import { createBrowserRouter } from 'react-router-dom'
-import HomePage from '@/pages/HomePage'
+import HomePage from '@/pages/base-page'
 import LoggedInOnly from '@/router/guard/logged-in-only'
 import GuestOnly from '@/router/guard/guest-only'
-import Signup from '@/components/Signup'
-import Main from '@/components/Main'
-import Login from '@/components/Login'
-import AccountDetail from '@/components/AccountDetail'
-import ChangePassword from '@/components/ChangePassword'
-import NotFound from '@/components/NotFound'
+import {
+    SignUp,
+    Main,
+    Login,
+    AccountDetail,
+    ChangePassword,
+    NotFound,
+} from '@/components'
 
 export const router = createBrowserRouter([
     {
@@ -34,7 +36,7 @@ export const router = createBrowserRouter([
                 path: 'signup',
                 element: (
                     <GuestOnly>
-                        <Signup />
+                        <SignUp />
                     </GuestOnly>
                 ),
             },

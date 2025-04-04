@@ -1,4 +1,4 @@
-import { ChangeEvent, useContext, useState } from 'react'
+import { ChangeEvent, FormEvent, useContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { LOCALSTORAGE_TOKEN_NAME } from '@/constants'
@@ -24,7 +24,7 @@ export const useLogin = () => {
     const navigate = useNavigate()
 
     const handlers = {
-        userLogin: async (e: Event) => {
+        userLogin: async (e: FormEvent<HTMLFormElement>) => {
             e.preventDefault()
             if (loading) return
 

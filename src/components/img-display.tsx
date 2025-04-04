@@ -1,10 +1,17 @@
 import { DEFAULT_PROFILE_URL } from '@/constants'
-import { calculateImageSize } from '@/utils'
+import { imageHelper } from '@/helpers'
+import { CardProfile, UserProfile } from '@/models'
 
-export default function ImgDisplay({ size, profile }) {
+type ImgDisplayProps = { size: number; profile: CardProfile | UserProfile }
+
+export const ImgDisplay = ({ size, profile }: ImgDisplayProps) => {
     const { width, height, rounded, transX, transY, scale } = profile.style
 
-    const { newHeight, newWidth } = calculateImageSize(width, height, size)
+    const { newHeight, newWidth } = imageHelper.calculateImageSize(
+        width,
+        height,
+        size,
+    )
 
     return (
         <div

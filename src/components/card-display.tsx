@@ -1,10 +1,12 @@
 import classNames from 'classnames'
 import { CARD_IMAGE_SIZE } from '@/constants'
-import useCardDisplay from '@/hooks/useCardDisplay'
-import ImageStyling from '@/components/ImageStyling'
-import ImgDisplay from '@/components/ImgDisplay'
+import { useCardDisplay } from '@/hooks'
+import { ImageStyling, ImgDisplay } from '@/components'
+import { Card } from '@/models'
 
-const CardDisplay = ({ card }) => {
+type CardDisplayProp = { card?: Card }
+
+export const CardDisplay = ({ card }: CardDisplayProp) => {
     const { data, saveProfileStyle, editPicture, handlePictureEdit } =
         useCardDisplay(card)
 
@@ -59,5 +61,3 @@ const CardDisplay = ({ card }) => {
         </div>
     )
 }
-
-export default CardDisplay

@@ -17,7 +17,7 @@ export const useCardMaker = () => {
     const [fileLoading, setFileLoading] = useState<boolean>(false)
 
     const handlers = {
-        descriptionChange: (e: ChangeEvent<HTMLInputElement>) => {
+        descriptionChange: (e: ChangeEvent<HTMLTextAreaElement>) => {
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             cardDispatch({
                 type: CARD_ACTIONS.UPDATE_DESCRIPTION,
@@ -33,7 +33,7 @@ export const useCardMaker = () => {
             })
         },
 
-        themeChange: (e: ChangeEvent<HTMLInputElement>) => {
+        themeChange: (e: ChangeEvent<HTMLSelectElement>) => {
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             cardDispatch({
                 type: CARD_ACTIONS.UPDATE_THEME,

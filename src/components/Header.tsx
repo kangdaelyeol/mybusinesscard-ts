@@ -1,20 +1,14 @@
 import { useContext } from 'react'
 import classNames from 'classnames'
 import { ThemeContext } from '@/context'
-import useHeader from '@/hooks/useHeader'
-import ProfileDetail from '@/components/ProfileDetail'
-import ImgDisplay from '@/components/ImgDisplay'
+import { useHeader } from '@/hooks'
+import { ImgDisplay, ProfileDetail } from '@/components'
 
-export default function Header() {
+export const Header = () => {
     const { theme, toggleTheme } = useContext(ThemeContext)
 
-    const {
-        profileDetail,
-        handleProfileClick,
-        userState,
-        hideProfileDetail,
-        handleTitleClick,
-    } = useHeader()
+    const { profileDetail, handleProfileClick, userState, handleTitleClick } =
+        useHeader()
 
     return (
         <header
@@ -65,9 +59,7 @@ export default function Header() {
                     </div>
                 )}
 
-                {userState.username && profileDetail && (
-                    <ProfileDetail hideProfileDetail={hideProfileDetail} />
-                )}
+                {userState.username && profileDetail && <ProfileDetail />}
             </div>
         </header>
     )

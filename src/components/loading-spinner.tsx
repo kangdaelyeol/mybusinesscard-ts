@@ -1,4 +1,4 @@
-export default function LoadingSpinner() {
+export const LoadingSpinner = () => {
     return (
         <div className="h-full w-full text-[3%] flex justify-center items-center gap-[5px]">
             <svg

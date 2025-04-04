@@ -3,7 +3,7 @@ import { ThemeContext } from '@/context'
 import classNames from 'classnames'
 import { GITHUB_URL } from '@/constants'
 
-export default function Footer() {
+export const Footer = () => {
     const { theme } = useContext(ThemeContext)
 
     return (

@@ -1,12 +1,10 @@
 import { useContext } from 'react'
 import classNames from 'classnames'
 import { ThemeContext } from '@/context'
-import CardDisplay from '@/components/CardDisplay'
-import CardEditor from '@/components/CardEditor'
-import CreateCard from '@/components/CreateCard'
-import useMain from '@/hooks/useMain'
+import { CardDisplay, CreateCard, CardEditor } from '@/components'
+import { useMain } from '@/hooks'
 
-export default function Main() {
+export const Main = () => {
     const { theme } = useContext(ThemeContext)
     const { cards, createCard, showCreateCard } = useMain()
 

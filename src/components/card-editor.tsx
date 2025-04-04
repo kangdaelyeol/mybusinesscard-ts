@@ -1,18 +1,21 @@
 import { useRef, useContext } from 'react'
 import classNames from 'classnames'
 import { ThemeContext } from '@/context'
-import useCardMaker from '@/hooks/useCardMaker'
-import LoadingSpinner from '@/components/LoadingSpinner'
+import { useCardEditor } from '@/hooks'
+import { LoadingSpinner } from '@/components'
+import { Card } from '@/models'
 
-export default function CardMaker() {
-    const { cardState, handlers, fileLoading } = useCardMaker()
+type CardEditorProp = { card: Card }
+
+export const CardEditor = ({ card }: CardEditorProp) => {
+    const { handlers, fileLoading } = useCardEditor(card)
 
     const { theme } = useContext(ThemeContext)
 
-    const fileInputRef = useRef()
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     const handleFileInputClick = () => {
-        if (fileLoading) return
+        if (fileLoading || !fileInputRef.current) return
         fileInputRef && fileInputRef.current.click()
     }
 
@@ -23,7 +26,6 @@ export default function CardMaker() {
                     <input
                         type="text"
                         name="name"
-                        id="name"
                         placeholder="Name"
                         className={classNames(
                             'grow rounded-[5px] px-[10px] py-[5px] outline-none border-[1px]',
@@ -32,13 +34,12 @@ export default function CardMaker() {
                                 'input-light': theme === 'light',
                             },
                         )}
-                        value={cardState.name}
+                        value={card.name}
                         onChange={handlers.nameChange}
                     />
 
                     <select
                         name="color"
-                        id="color"
                         className={classNames(
                             'rounded-[5px] px-[10px] py-[5px] outline-none border-[1px] cursor-pointer',
                             {
@@ -46,7 +47,7 @@ export default function CardMaker() {
                                 'input-light': theme === 'light',
                             },
                         )}
-                        value={cardState.theme}
+                        value={card.theme}
                         onChange={handlers.themeChange}
                     >
                         <option value="black">black</option>
@@ -63,16 +64,15 @@ export default function CardMaker() {
                         },
                     )}
                     name="description"
-                    id="description"
-                    rows="3"
+                    rows={3}
                     placeholder="description"
-                    value={cardState.description}
+                    value={card.description}
                     onChange={handlers.descriptionChange}
                 ></textarea>
 
                 <div className="flex w-full gap-[10px]">
                     <input
-                        onChange={handlers.fileInput}
+                        onChange={handlers.profileChange}
                         accept="image/*"
                         ref={fileInputRef}
                         type="file"
@@ -82,7 +82,7 @@ export default function CardMaker() {
                     <button
                         onClick={handleFileInputClick}
                         className={classNames(
-                            'btn-black font-bold py-[10px] rounded-[5px] select-none grow transition-all border-[1px]',
+                            'font-bold py-[10px] rounded-[5px] select-none grow transition-all border-[1px]',
                             {
                                 'btn-light': theme === 'light',
                                 'btn-dark': theme === 'dark',
@@ -93,7 +93,7 @@ export default function CardMaker() {
                     </button>
 
                     <button
-                        onClick={handlers.cardSave}
+                        onClick={handlers.cardDelete}
                         className={classNames(
                             'font-bold px-[15px] py-[10px] rounded-[5px] text-white select-none border-[1px] transition-all',
                             {
@@ -102,7 +102,7 @@ export default function CardMaker() {
                             },
                         )}
                     >
-                        save
+                        Delete
                     </button>
                 </div>
             </div>

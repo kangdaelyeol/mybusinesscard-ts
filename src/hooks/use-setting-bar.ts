@@ -1,15 +1,9 @@
-import {
-    useState,
-    useEffect,
-    Dispatch,
-    SetStateAction,
-    MouseEvent,
-} from 'react'
+import { useState, useEffect, MouseEvent } from 'react'
 
 export const useSettingBar = (
     minVal: number,
     maxVal: number,
-    setRate: Dispatch<SetStateAction<number>>,
+    setRate: (value: number) => void,
     value: number,
     barWidth: number,
 ) => {

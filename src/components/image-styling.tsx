@@ -1,11 +1,22 @@
 import { useContext } from 'react'
-import SettingBar from '@/components/SettingBar'
+import { SettingBar } from '@/components'
 import { MAX_SCALE_VALUE } from '@/constants'
-import useImageStyling from '@/hooks/useImageStyling'
-import { calculateImageSize } from '@/utils'
+import { useAvatarSizing } from '@/hooks'
 import { ResponsiveContext } from '@/context'
+import { CardStyle, UserProfileStyle } from '@/models'
+import { imageHelper } from '@/helpers'
 
-export default function ImageStyling({ url, style, saveProfileStyle }) {
+type ImageStylingProps = {
+    url: string
+    style: CardStyle | UserProfileStyle
+    saveProfileStyle: (style: CardStyle) => void
+}
+
+export const ImageStyling = ({
+    url,
+    style,
+    saveProfileStyle,
+}: ImageStylingProps) => {
     const {
         imgStyle,
         setScaleRate,
@@ -14,17 +25,14 @@ export default function ImageStyling({ url, style, saveProfileStyle }) {
         setTransYRate,
         handleStyleSave,
         handleExitClick,
-    } = useImageStyling(style, saveProfileStyle)
+    } = useAvatarSizing(style, saveProfileStyle)
 
     const { pictureSize } = useContext(ResponsiveContext)
 
     const { width, height, scale, rounded, transX, transY } = imgStyle
 
-    const { newHeight, newWidth, minTransX, minTransY } = calculateImageSize(
-        width,
-        height,
-        pictureSize,
-    )
+    const { newHeight, newWidth, minTransX, minTransY } =
+        imageHelper.calculateImageSize(width, height, pictureSize)
 
     const settingBarOptionList = [
         {

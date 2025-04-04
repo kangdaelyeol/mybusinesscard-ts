@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 
-export default function NotFound() {
+export const NotFound = () => {
     const navigate = useNavigate()
 
     const handleGoToMainClick = () => {

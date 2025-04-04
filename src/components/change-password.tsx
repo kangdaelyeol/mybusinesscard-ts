@@ -1,10 +1,10 @@
 import classNames from 'classnames'
 import { useContext } from 'react'
 import { ThemeContext } from '@/context'
-import LoadingSpinner from '@/components/LoadingSpinner'
-import useChangePassword from '@/hooks/useChangePassword'
+import { LoadingSpinner } from '@/components'
+import { useChangePassword } from '@/hooks'
 
-export default function ChangePassword() {
+export const ChangePassword = () => {
     const { theme } = useContext(ThemeContext)
     const { handlers, saveLoading, errorMessage, passwordState } =
         useChangePassword()
@@ -15,8 +15,7 @@ export default function ChangePassword() {
                 'py-[var(--header-height)] mb-[var(--footer-height-margin)] min-h-[100vh] mx-auto',
                 {
                     'bg-white': theme === 'light',
-                    'bg-black-semilight text-white':
-                        theme === 'dark',
+                    'bg-black-semilight text-white': theme === 'dark',
                 },
             )}
         >
@@ -108,8 +107,7 @@ export default function ChangePassword() {
                     className={classNames(
                         'py-[10px] w-[300px] mx-auto mt-[25px] font-bold text-center cursor-pointer rounded-[8px]',
                         {
-                            'bg-black hover:bg-black-bright':
-                                theme === 'dark',
+                            'bg-black hover:bg-black-bright': theme === 'dark',
                             'bg-gray hover:bg-black-bright text-white':
                                 theme === 'light',
                         },

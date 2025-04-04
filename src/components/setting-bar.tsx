@@ -1,9 +1,23 @@
 import { useContext } from 'react'
 import classNames from 'classnames'
-import useSettingBar from '@/hooks/useSettingBar'
+import { useSettingBar } from '@/hooks'
 import { ResponsiveContext } from '@/context'
 
-export default function SettingBar({ setRate, title, minVal, maxVal, value }) {
+type SettingBarProps = {
+    setRate: (value: number) => void
+    title: string
+    minVal: number
+    maxVal: number
+    value: number
+}
+
+export const SettingBar = ({
+    setRate,
+    title,
+    minVal,
+    maxVal,
+    value,
+}: SettingBarProps) => {
     const { barWidth } = useContext(ResponsiveContext)
     const {
         handleBarMove,

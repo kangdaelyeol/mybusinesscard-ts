@@ -1,15 +1,14 @@
 import { CardProvider } from '@/context'
-import CardMaker from '@/components/CardMaker'
-import CardDisplay from '@/components/CardDisplay'
+import { CardDisplay, CardMaker } from '@/components'
 import { useContext } from 'react'
-import { PubSubContext } from '../context'
-import { EVENT_TYPES } from '../context/PubSubContext'
+import { PubSubContext } from '@/context'
+import { PUBSUB_EVENT_TYPES } from '@/context/types'
 
-export default function CreateCard() {
+export const CreateCard = () => {
     const { publish } = useContext(PubSubContext)
 
     const hideCreateCard = () => {
-        publish(EVENT_TYPES.HIDE_CREATE_CARD)
+        publish(PUBSUB_EVENT_TYPES.HIDE_CREATE_CARD)
     }
 
     return (

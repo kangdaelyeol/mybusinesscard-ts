@@ -1,4 +1,4 @@
-import { ChangeEvent, useContext, useState } from 'react'
+import { ChangeEvent, FormEvent, useContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { LOCALSTORAGE_TOKEN_NAME } from '@/constants'
 import { ToasterMessageContext } from '@/context'
@@ -6,7 +6,7 @@ import { initCards } from '@/store/cards-slice'
 import { setUser } from '@/store/user-slice'
 import { userService } from '@/services/user-service'
 
-export default function useSignup() {
+export const useSignup = () => {
     const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
 
     const dispatch = useDispatch()
@@ -44,7 +44,7 @@ export default function useSignup() {
             setSignupInput((prev) => ({ ...prev, nickname: e.target.value }))
         },
 
-        signupSubmit: async (e: Event) => {
+        signupSubmit: async (e: FormEvent<HTMLFormElement>) => {
             e.preventDefault()
             setLoading(true)
             const { username, password, confirmPassword, nickname } =

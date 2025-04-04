@@ -80,7 +80,7 @@ export const useCardEditor = (card: Card) => {
             dispatch(updateCardName({ id: card.id, value: e.target.value }))
         },
 
-        descriptionChange: (e: ChangeEvent<HTMLInputElement>) => {
+        descriptionChange: (e: ChangeEvent<HTMLTextAreaElement>) => {
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             cardService
                 .updateDescription(card.id, e.target.value)
@@ -95,7 +95,7 @@ export const useCardEditor = (card: Card) => {
             )
         },
 
-        themeChange: (e: ChangeEvent<HTMLInputElement>) => {
+        themeChange: (e: ChangeEvent<HTMLSelectElement>) => {
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             const theme = e.target.value as CardTheme
             cardService.updateTheme(card.id, theme).then((res) => {

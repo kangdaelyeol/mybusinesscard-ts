@@ -1,18 +1,18 @@
 import { useRef, useContext } from 'react'
 import classNames from 'classnames'
 import { ThemeContext } from '@/context'
-import useCardEditor from '@/hooks/useCardEditor'
-import LoadingSpinner from '@/components/LoadingSpinner'
+import { useCardMaker } from '@/hooks'
+import { LoadingSpinner } from '@/components'
 
-const CardEditor = ({ card }) => {
-    const { handlers, fileLoading } = useCardEditor(card)
+export const CardMaker = () => {
+    const { cardState, handlers, fileLoading } = useCardMaker()
 
     const { theme } = useContext(ThemeContext)
 
-    const fileInputRef = useRef()
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     const handleFileInputClick = () => {
-        if (fileLoading) return
+        if (fileLoading || !fileInputRef.current) return
         fileInputRef && fileInputRef.current.click()
     }
 
@@ -23,6 +23,7 @@ const CardEditor = ({ card }) => {
                     <input
                         type="text"
                         name="name"
+                        id="name"
                         placeholder="Name"
                         className={classNames(
                             'grow rounded-[5px] px-[10px] py-[5px] outline-none border-[1px]',
@@ -31,12 +32,13 @@ const CardEditor = ({ card }) => {
                                 'input-light': theme === 'light',
                             },
                         )}
-                        value={card.name}
+                        value={cardState.name}
                         onChange={handlers.nameChange}
                     />
 
                     <select
                         name="color"
+                        id="color"
                         className={classNames(
                             'rounded-[5px] px-[10px] py-[5px] outline-none border-[1px] cursor-pointer',
                             {
@@ -44,7 +46,7 @@ const CardEditor = ({ card }) => {
                                 'input-light': theme === 'light',
                             },
                         )}
-                        value={card.theme}
+                        value={cardState.theme}
                         onChange={handlers.themeChange}
                     >
                         <option value="black">black</option>
@@ -61,15 +63,16 @@ const CardEditor = ({ card }) => {
                         },
                     )}
                     name="description"
-                    rows="3"
+                    id="description"
+                    rows={3}
                     placeholder="description"
-                    value={card.description}
+                    value={cardState.description}
                     onChange={handlers.descriptionChange}
                 ></textarea>
 
                 <div className="flex w-full gap-[10px]">
                     <input
-                        onChange={handlers.profileChange}
+                        onChange={handlers.fileInput}
                         accept="image/*"
                         ref={fileInputRef}
                         type="file"
@@ -79,7 +82,7 @@ const CardEditor = ({ card }) => {
                     <button
                         onClick={handleFileInputClick}
                         className={classNames(
-                            'font-bold py-[10px] rounded-[5px] select-none grow transition-all border-[1px]',
+                            'btn-black font-bold py-[10px] rounded-[5px] select-none grow transition-all border-[1px]',
                             {
                                 'btn-light': theme === 'light',
                                 'btn-dark': theme === 'dark',
@@ -90,7 +93,7 @@ const CardEditor = ({ card }) => {
                     </button>
 
                     <button
-                        onClick={handlers.cardDelete}
+                        onClick={handlers.cardSave}
                         className={classNames(
                             'font-bold px-[15px] py-[10px] rounded-[5px] text-white select-none border-[1px] transition-all',
                             {
@@ -99,12 +102,10 @@ const CardEditor = ({ card }) => {
                             },
                         )}
                     >
-                        Delete
+                        save
                     </button>
                 </div>
             </div>
         </div>
     )
 }
-
-export default CardEditor
