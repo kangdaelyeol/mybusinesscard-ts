@@ -21,7 +21,7 @@ export const CardEditor = ({ card }: CardEditorProp) => {
 
     return (
         <div className="flex flex-1 justify-center items-center h-[230px]">
-            <div className="flex flex-col w-editor-lg gap-[10px]">
+            <div className="flex flex-col w-[440px] w-editor-lg gap-[10px]">
                 <div className="flex w-full gap-[10px]">
                     <input
                         type="text"
