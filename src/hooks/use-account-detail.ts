@@ -155,13 +155,14 @@ export const useAccountDetail = () => {
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             setSaveLoading(true)
 
-            const updatedNickname = await userService.updateNickname(
+            const updateNicknameRes = await userService.updateNickname(
                 userState.username,
                 nickname,
             )
 
-            if (!updatedNickname) {
-                setErrorMessage('Failed to update nickname')
+            if (!updateNicknameRes.ok) {
+                setToasterMessageTimeOut('Failed to save')
+                setErrorMessage(updateNicknameRes.reason)
                 setSaveLoading(false)
                 return
             }

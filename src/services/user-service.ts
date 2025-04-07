@@ -33,7 +33,7 @@ export const userService = {
             throw new Error('Unexpected Error - get User in userservice')
         }
     },
-    
+
     create: async (
         username: string,
         password: string,
@@ -134,7 +134,7 @@ export const userService = {
         if (validateNicknameRes.isValid === false) {
             return {
                 ok: false,
-                reason: "Nickname should have 2 to 20 characters, shouldn't contain blank(nbsp) and special symbols.",
+                reason: validateNicknameRes.reason,
             }
         }
 

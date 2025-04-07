@@ -28,7 +28,7 @@ export default function GuestOnly({ children }: GuestOnlyProps) {
             const storageUsername = authHelper.getLocalStorageUsername()
 
             if (!storageUsername) {
-                navigate('/')
+                navigate('/login')
                 return
             }
 

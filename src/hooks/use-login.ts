@@ -37,7 +37,9 @@ export const useLogin = () => {
             )
 
             if (!signInRes.ok) {
+                setErrorMessage(signInRes.reason)
                 setToasterMessageTimeOut('Failed to Signin')
+                setLoading(false)
                 return
             }
 

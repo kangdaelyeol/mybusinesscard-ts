@@ -53,11 +53,11 @@ export const authService = {
         newPassword: string,
         confirmPassword: string,
     ): Promise<ChangePasswordResponse> => {
-        const validatePasswordRes = userValidator.password(password)
+        const validatePasswordRes = userValidator.password(newPassword)
         if (validatePasswordRes.isValid === false) {
             return {
                 ok: false,
-                reason: "password has 4 to 20 length of characters and doesn't contain blank",
+                reason: validatePasswordRes.reason,
             }
         }
 

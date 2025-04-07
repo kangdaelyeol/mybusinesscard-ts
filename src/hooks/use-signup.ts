@@ -52,9 +52,9 @@ export const useSignup = () => {
 
             const createUserRes = await userService.create(
                 username,
-                nickname,
                 password,
                 confirmPassword,
+                nickname,
             )
 
             if (createUserRes.ok) {

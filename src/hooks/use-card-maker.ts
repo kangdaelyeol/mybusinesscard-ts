@@ -1,16 +1,18 @@
 import { ChangeEvent, useContext, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { CARD_ACTIONS } from '@/reducer'
 import { createCard } from '@/store/cards-slice'
 import { cardFactory, CardTheme } from '@/models'
 import { CardContext, ToasterMessageContext, PubSubContext } from '@/context'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
 import { cardService, cloudinaryService } from '@/services'
+import { RootState } from '@/store'
 
 export const useCardMaker = () => {
     const { publish } = useContext(PubSubContext)
     const { cardState, cardDispatch } = useContext(CardContext)
     const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
+    const userState = useSelector((state: RootState) => state.user)
 
     const dispatch = useDispatch()
 
@@ -90,11 +92,13 @@ export const useCardMaker = () => {
         cardSave: async () => {
             if (fileLoading) return
 
-            const cardID = Date.now()
+            const cardID = Date.now().toString()
 
             const newCard = cardFactory.createCard({
                 ...cardState,
                 id: cardID,
+                createdAt: new Date().toISOString(),
+                createdBy: userState.username,
             })
 
             const createCardRes = await cardService.create(newCard)
