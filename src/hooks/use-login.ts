@@ -1,12 +1,15 @@
 import { ChangeEvent, FormEvent, useContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { LOCALSTORAGE_TOKEN_NAME } from '@/constants'
+import {
+    LOCALSTORAGE_JWT_ACCESS_TOKEN_NAME,
+    LOCALSTORAGE_JWT_REFRESH_TOKEN_NAME,
+} from '@/constants'
 import { ToasterMessageContext } from '@/context'
 import { initCards } from '@/store/cards-slice'
 import { setUser } from '@/store/user-slice'
 import { authService } from '@/services/auth-service'
-import { cardService, userService } from '@/services'
+import { cardService, userService, jwtService } from '@/services'
 
 export const useLogin = () => {
     const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
@@ -15,7 +18,11 @@ export const useLogin = () => {
 
     const [loading, setLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
-    const [loginInput, setLoginInput] = useState({
+    const [loginInput, setLoginInput] = useState<{
+        username: string
+        password: string
+        remember: boolean
+    }>({
         username: '',
         password: '',
         remember: false,
@@ -33,7 +40,6 @@ export const useLogin = () => {
             const signInRes = await authService.signIn(
                 loginInput.username,
                 loginInput.password,
-                loginInput.remember,
             )
 
             if (!signInRes.ok) {
@@ -47,7 +53,6 @@ export const useLogin = () => {
 
             if (!getUserRes.ok) {
                 setToasterMessageTimeOut('Failed to fetch user info')
-                localStorage.removeItem(LOCALSTORAGE_TOKEN_NAME)
                 setLoading(false)
                 return
             }
@@ -58,9 +63,25 @@ export const useLogin = () => {
 
             if (!getCardListRes.ok) {
                 setToasterMessageTimeOut('Failed to fetch card info')
-                localStorage.removeItem(LOCALSTORAGE_TOKEN_NAME)
                 setLoading(false)
                 return
+            }
+
+            const jwtToken = await jwtService.generateToken(
+                username,
+                loginInput.remember,
+            )
+
+            localStorage.setItem(
+                LOCALSTORAGE_JWT_ACCESS_TOKEN_NAME,
+                jwtToken.accessToken,
+            )
+
+            if (jwtToken.refreshToken) {
+                localStorage.setItem(
+                    LOCALSTORAGE_JWT_REFRESH_TOKEN_NAME,
+                    jwtToken.refreshToken,
+                )
             }
 
             dispatch(setUser({ username, profile, nickname }))

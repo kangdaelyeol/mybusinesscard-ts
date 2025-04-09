@@ -11,9 +11,8 @@ import {
 import { clearCards } from '@/store/cards-slice'
 import { userFactory, UserProfileStyle } from '@/models'
 import { PubSubContext, ToasterMessageContext } from '@/context'
-import { LOCALSTORAGE_TOKEN_NAME } from '@/constants'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
-import { cloudinaryService, userService } from '@/services'
+import { cloudinaryService, userService, jwtService } from '@/services'
 
 export const useAccountDetail = () => {
     const { publish, subscribe, unSubscribe } = useContext(PubSubContext)
@@ -209,7 +208,7 @@ export const useAccountDetail = () => {
                 }),
             )
 
-            localStorage.removeItem(LOCALSTORAGE_TOKEN_NAME)
+            jwtService.deleteToken()
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             dispatch(clearUser())
             dispatch(clearCards())

@@ -1,29 +1,41 @@
-import { ReactNode, useEffect } from 'react'
+import { ReactNode, useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { initCards } from '@/store/cards-slice'
 import { setUser } from '@/store/user-slice'
-import { AppDispatch, RootState } from '@/store'
+import { AppDispatch } from '@/store'
 import { userFacade } from '@/facade'
+import { jwtService } from '@/services'
+import { ToasterMessageContext } from '@/context'
 
 interface LoggedInOnlyProps {
     children: ReactNode
 }
 
 export default function LoggedInOnly({ children }: LoggedInOnlyProps) {
-    const userState = useSelector((state: RootState) => state.user)
-
     const navigate = useNavigate()
 
     const dispatch = useDispatch<AppDispatch>()
 
+    const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
+
     useEffect(() => {
         ;(async () => {
-            if (userState?.username) return
+            const jwtAccessToken = jwtService.getAccessToken()
 
             if (!jwtAccessToken) {
+                setToasterMessageTimeOut('Failed to verify token')
+                navigate('/login', { replace: true })
+                return
+            }
 
-            if (!storageUsername) {
+            const username = await jwtService.getUsernameByAccessToken(
+                jwtAccessToken,
+            )
+
+            if (!username) {
+                setToasterMessageTimeOut('Failed to verify token')
+                jwtService.deleteToken()
                 navigate('/login', { replace: true })
                 return
             }
@@ -34,6 +46,7 @@ export default function LoggedInOnly({ children }: LoggedInOnlyProps) {
 
             if (!getUserWithCardListRes.ok) {
                 jwtService.deleteToken()
+                setToasterMessageTimeOut('Failed to verify token')
                 navigate('/login', { replace: true })
                 return
             }

@@ -2,7 +2,6 @@ import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { userFactory, UserProfileStyle } from '@/models'
-import { LOCALSTORAGE_TOKEN_NAME } from '@/constants'
 import { PubSubContext, ToasterMessageContext } from '@/context'
 import { clearCards } from '@/store/cards-slice'
 import {
@@ -12,7 +11,7 @@ import {
 } from '@/store/user-slice'
 import { RootState } from '@/store'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
-import { cloudinaryService, userService } from '@/services'
+import { cloudinaryService, userService, jwtService } from '@/services'
 
 export const useProfileDetail = () => {
     const { subscribe, unSubscribe, publish } = useContext(PubSubContext)
@@ -131,7 +130,7 @@ export const useProfileDetail = () => {
         },
 
         logoutClick: () => {
-            localStorage.removeItem(LOCALSTORAGE_TOKEN_NAME)
+            jwtService.deleteToken()
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             dispatch(clearUser())
             dispatch(clearCards())

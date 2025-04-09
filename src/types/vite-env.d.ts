@@ -12,6 +12,8 @@ interface ImportMetaEnv {
     readonly VITE_MESSAGEING_SENDER_ID: string
     readonly VITE_APP_ID: string
     readonly VITE_MEASUREMENT_ID: string
+    readonly VITE_JWT_SECRET: string
+    readonly VITE_JWT_ALG: string
 }
 
 interface ImportMeta {

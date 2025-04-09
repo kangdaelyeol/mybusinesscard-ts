@@ -1,10 +1,10 @@
 import { ChangeEvent, FormEvent, useContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { LOCALSTORAGE_TOKEN_NAME } from '@/constants'
 import { ToasterMessageContext } from '@/context'
 import { initCards } from '@/store/cards-slice'
 import { setUser } from '@/store/user-slice'
-import { userService } from '@/services/user-service'
+import { jwtService, userService } from '@/services'
+import { LOCALSTORAGE_JWT_ACCESS_TOKEN_NAME } from '@/constants'
 
 export const useSignup = () => {
     const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
@@ -60,7 +60,11 @@ export const useSignup = () => {
             if (createUserRes.ok) {
                 const { username, profile, nickname } = createUserRes.data
 
-                localStorage.setItem(LOCALSTORAGE_TOKEN_NAME, username)
+                const jwtToken = await jwtService.generateToken(username, false)
+                localStorage.setItem(
+                    LOCALSTORAGE_JWT_ACCESS_TOKEN_NAME,
+                    jwtToken.accessToken,
+                )
 
                 dispatch(setUser({ username, profile, nickname }))
                 dispatch(initCards({ cards: [] }))

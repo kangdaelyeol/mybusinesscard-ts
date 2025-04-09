@@ -2,10 +2,11 @@ import { useEffect, ReactNode, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { initCards } from '@/store/cards-slice'
-import { setUser } from '@/store/user-slice'
+import { clearUser, setUser } from '@/store/user-slice'
 import { AppDispatch, RootState } from '@/store'
 import { userFacade } from '@/facade'
 import { ToasterMessageContext } from '@/context'
+import { jwtService } from '@/services'
 
 interface GuestOnlyProps {
     children: ReactNode
@@ -19,15 +20,33 @@ export default function GuestOnly({ children }: GuestOnlyProps) {
 
     useEffect(() => {
         ;(async () => {
-            if (userState.username) {
-                navigate('/')
+            const jwtRefreshToken = jwtService.getRefreshToken()
+
+            if (!jwtRefreshToken) {
+                setToasterMessageTimeOut('Failed to verify token')
+                dispatch(clearUser())
+                return
+            }
+
+            const jwtAccessToken =
+                await jwtService.generateAccessTokenByRefreshToken(
+                    jwtRefreshToken,
+                )
+
+            if (!jwtAccessToken) {
+                setToasterMessageTimeOut('Failed to verify token')
+                dispatch(clearUser())
                 return
             }
 
             const username = await jwtService.getUsernameByAccessToken(
+                jwtAccessToken,
+            )
 
             if (!username) {
-                navigate('/login')
+                setToasterMessageTimeOut('Failed to verify token')
+                jwtService.deleteToken()
+                dispatch(clearUser())
                 return
             }
 
@@ -38,7 +57,7 @@ export default function GuestOnly({ children }: GuestOnlyProps) {
             if (!getUserWithCardListRes.ok) {
                 setToasterMessageTimeOut('Failed to load user and card data')
                 jwtService.deleteToken()
-                navigate('/')
+                dispatch(clearUser())
                 return
             }
 
@@ -50,6 +69,7 @@ export default function GuestOnly({ children }: GuestOnlyProps) {
                 profile: user.profile,
                 nickname: user.nickname,
             })
+            navigate('/')
         })()
     }, [userState])
 
