@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { initCards } from '@/store/cards-slice'
 import { setUser } from '@/store/user-slice'
 import { AppDispatch, RootState } from '@/store'
-import { authHelper } from '@/helpers'
 import { userFacade } from '@/facade'
 
 interface LoggedInOnlyProps {
@@ -22,7 +21,7 @@ export default function LoggedInOnly({ children }: LoggedInOnlyProps) {
         ;(async () => {
             if (userState?.username) return
 
-            const storageUsername = authHelper.getLocalStorageUsername()
+            if (!jwtAccessToken) {
 
             if (!storageUsername) {
                 navigate('/login', { replace: true })
@@ -30,11 +29,11 @@ export default function LoggedInOnly({ children }: LoggedInOnlyProps) {
             }
 
             const getUserWithCardListRes = await userFacade.getUserWithCardList(
-                storageUsername,
+                username,
             )
 
             if (!getUserWithCardListRes.ok) {
-                authHelper.removeLocalStorageUsername()
+                jwtService.deleteToken()
                 navigate('/login', { replace: true })
                 return
             }

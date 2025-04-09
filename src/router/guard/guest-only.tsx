@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { initCards } from '@/store/cards-slice'
 import { setUser } from '@/store/user-slice'
 import { AppDispatch, RootState } from '@/store'
-import { authHelper } from '@/helpers'
 import { userFacade } from '@/facade'
 import { ToasterMessageContext } from '@/context'
 
@@ -25,20 +24,20 @@ export default function GuestOnly({ children }: GuestOnlyProps) {
                 return
             }
 
-            const storageUsername = authHelper.getLocalStorageUsername()
+            const username = await jwtService.getUsernameByAccessToken(
 
-            if (!storageUsername) {
+            if (!username) {
                 navigate('/login')
                 return
             }
 
             const getUserWithCardListRes = await userFacade.getUserWithCardList(
-                storageUsername,
+                username,
             )
 
             if (!getUserWithCardListRes.ok) {
                 setToasterMessageTimeOut('Failed to load user and card data')
-                authHelper.removeLocalStorageUsername()
+                jwtService.deleteToken()
                 navigate('/')
                 return
             }

@@ -1,13 +1,11 @@
 import { authClient } from '@/client'
 import { userValidator } from '@/services/validate'
-import { LOCALSTORAGE_TOKEN_NAME } from '@/constants'
 import { ChangePasswordResponse, SignInResponse } from '@/services/types'
 
 export const authService = {
     signIn: async (
         username: string,
         password: string,
-        rememberme: boolean,
     ): Promise<SignInResponse> => {
         const validateUsernameRes = userValidator.username(username)
 
@@ -34,10 +32,6 @@ export const authService = {
                 reason: authRes.reason,
             }
         } else if (authRes.status === 200 && 'token' in authRes) {
-            if (rememberme) {
-                localStorage.setItem(LOCALSTORAGE_TOKEN_NAME, authRes.token)
-            }
-
             return {
                 ok: true,
                 data: authRes.token,

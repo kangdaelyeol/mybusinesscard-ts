@@ -1,4 +1,4 @@
-export * from '@/constants/local-storage'
+export * from '@/constants/jwt-storage'
 export * from '@/constants/ui-internal'
 export * from '@/constants/ui-size'
 export * from '@/constants/url-default'
