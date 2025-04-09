@@ -195,6 +195,7 @@ export const useAccountDetail = () => {
 
             if (!success) {
                 setToasterMessageTimeOut('Failed to delete user')
+                jwtService.deleteToken()
                 setDeleteAccountLoading(false)
                 return
             }

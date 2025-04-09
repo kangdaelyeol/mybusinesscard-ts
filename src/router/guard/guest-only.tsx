@@ -23,7 +23,6 @@ export default function GuestOnly({ children }: GuestOnlyProps) {
             const jwtRefreshToken = jwtService.getRefreshToken()
 
             if (!jwtRefreshToken) {
-                setToasterMessageTimeOut('Failed to verify token')
                 dispatch(clearUser())
                 return
             }
@@ -35,6 +34,7 @@ export default function GuestOnly({ children }: GuestOnlyProps) {
 
             if (!jwtAccessToken) {
                 setToasterMessageTimeOut('Failed to verify token')
+                jwtService.deleteToken()
                 dispatch(clearUser())
                 return
             }
