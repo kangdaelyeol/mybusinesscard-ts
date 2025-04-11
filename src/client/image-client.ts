@@ -31,6 +31,7 @@ export const imageClient = {
                 CLOUDINARY_UPLOAD_REQUEST_URL,
                 formData,
             )
+
             return { status: res.status, data: res.data }
         } catch (e) {
             console.error(e)
@@ -50,14 +51,13 @@ export const imageClient = {
         }
         const formData = new FormData()
 
-        const sigSHA1 = cloudinaryHelper.generateSignatureSHA1(
-            publicId,
-            import.meta.env.VITE_CLOUDINARY_API_SECRET,
-        )
+        const timestamp = cloudinaryHelper.getTimestamp()
+
+        const sigSHA1 = cloudinaryHelper.generateSignatureSHA1(publicId, timestamp)
 
         formData.append('asset_id', assetId)
         formData.append('public_id', publicId)
-        formData.append('timestamp', new Date().getTime().toString())
+        formData.append('timestamp', timestamp)
         formData.append('api_key', import.meta.env.VITE_API_KEY)
         formData.append('signature', sigSHA1.toString())
         try {
