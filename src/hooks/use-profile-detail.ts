@@ -11,7 +11,8 @@ import {
 } from '@/store/user-slice'
 import { RootState } from '@/store'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
-import { cloudinaryService, userService, jwtService } from '@/services'
+import { cloudinaryService, userService } from '@/services'
+import { jwtUtil } from '@/utils'
 
 export const useProfileDetail = () => {
     const { subscribe, unSubscribe, publish } = useContext(PubSubContext)
@@ -130,7 +131,7 @@ export const useProfileDetail = () => {
         },
 
         logoutClick: () => {
-            jwtService.deleteToken()
+            jwtUtil.deleteToken()
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             dispatch(clearUser())
             dispatch(clearCards())

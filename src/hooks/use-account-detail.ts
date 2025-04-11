@@ -12,7 +12,8 @@ import { clearCards } from '@/store/cards-slice'
 import { userFactory, UserProfileStyle } from '@/models'
 import { PubSubContext, ToasterMessageContext } from '@/context'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
-import { cloudinaryService, userService, jwtService } from '@/services'
+import { cloudinaryService, userService } from '@/services'
+import { jwtUtil } from '@/utils'
 
 export const useAccountDetail = () => {
     const { publish, subscribe, unSubscribe } = useContext(PubSubContext)
@@ -195,7 +196,7 @@ export const useAccountDetail = () => {
 
             if (!success) {
                 setToasterMessageTimeOut('Failed to delete user')
-                jwtService.deleteToken()
+                jwtUtil.deleteToken()
                 setDeleteAccountLoading(false)
                 return
             }
@@ -209,7 +210,7 @@ export const useAccountDetail = () => {
                 }),
             )
 
-            jwtService.deleteToken()
+            jwtUtil.deleteToken()
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             dispatch(clearUser())
             dispatch(clearCards())

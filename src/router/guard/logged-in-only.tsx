@@ -5,8 +5,8 @@ import { initCards } from '@/store/cards-slice'
 import { setUser } from '@/store/user-slice'
 import { AppDispatch } from '@/store'
 import { userFacade } from '@/facade'
-import { jwtService } from '@/services'
 import { ToasterMessageContext } from '@/context'
+import { jwtUtil } from '@/utils'
 
 interface LoggedInOnlyProps {
     children: ReactNode
@@ -21,7 +21,7 @@ export default function LoggedInOnly({ children }: LoggedInOnlyProps) {
 
     useEffect(() => {
         ;(async () => {
-            const jwtAccessToken = jwtService.getAccessToken()
+            const jwtAccessToken = jwtUtil.getAccessToken()
 
             if (!jwtAccessToken) {
                 setToasterMessageTimeOut('Failed to verify token')
@@ -29,13 +29,13 @@ export default function LoggedInOnly({ children }: LoggedInOnlyProps) {
                 return
             }
 
-            const username = await jwtService.getUsernameByAccessToken(
+            const username = await jwtUtil.getUsernameByAccessToken(
                 jwtAccessToken,
             )
 
             if (!username) {
                 setToasterMessageTimeOut('Failed to verify token')
-                jwtService.deleteToken()
+                jwtUtil.deleteToken()
                 navigate('/login', { replace: true })
                 return
             }
@@ -45,7 +45,7 @@ export default function LoggedInOnly({ children }: LoggedInOnlyProps) {
             )
 
             if (!getUserWithCardListRes.ok) {
-                jwtService.deleteToken()
+                jwtUtil.deleteToken()
                 setToasterMessageTimeOut('Failed to verify token')
                 navigate('/login', { replace: true })
                 return

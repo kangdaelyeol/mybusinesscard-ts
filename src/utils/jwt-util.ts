@@ -12,7 +12,7 @@ interface GenerateTokenResponse {
     refreshToken: string | null
 }
 
-export const jwtService = {
+export const jwtUtil = {
     generateToken: async (
         username: string,
         rememberMe: boolean,
