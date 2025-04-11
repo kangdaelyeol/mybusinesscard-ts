@@ -7,6 +7,7 @@ import {
     UpdateUserNicknameResponse,
 } from '@/services/types'
 import { jwtUtil } from '@/utils'
+
 export const userService = {
     get: async (username: string): Promise<GetUserResponse> => {
         const validateUsernameRes = userValidator.username(username)

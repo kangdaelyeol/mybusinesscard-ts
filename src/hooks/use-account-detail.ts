@@ -214,7 +214,7 @@ export const useAccountDetail = () => {
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             dispatch(clearUser())
             dispatch(clearCards())
-            setToasterMessageTimeOut('Account is removed successfully!!')
+            setToasterMessageTimeOut('Your account is deleted successfully!!')
             navigate('/login')
         },
     }

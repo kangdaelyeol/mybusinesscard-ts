@@ -42,7 +42,7 @@ export const cloudinaryService = {
             'reason' in deleteInCloudinaryRes
         ) {
             console.error(
-                `Error - uploadInClodinary: ${deleteInCloudinaryRes.reason}`,
+                `Error - deleteInClodinary: ${deleteInCloudinaryRes.reason}`,
             )
             return false
         } else {
