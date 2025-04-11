@@ -1,12 +1,13 @@
 import { db } from '@/config/firebase'
 import { ref, get, child, set } from 'firebase/database'
 import { AuthClientResponse, AuthGetResponse } from '@/client/types'
+import { bcryptUtil } from '@/utils'
 
 export const authClient = {
     signIn: async (
         username: string,
         password: string,
-    ): Promise<AuthGetResponse> => {        
+    ): Promise<AuthGetResponse> => {
         try {
             const snapshot = await get(child(ref(db), `/users/${username}`))
 
@@ -15,7 +16,13 @@ export const authClient = {
             }
 
             const userData = snapshot.val()
-            if (userData.password !== password)
+
+            const comparePasswordRes = await bcryptUtil.compare(
+                password,
+                userData.password,
+            )
+
+            if (!comparePasswordRes)
                 return { status: 400, reason: "password doesn't match!" }
 
             return { status: 200, token: username }
@@ -30,12 +37,16 @@ export const authClient = {
         password: string,
         newPassword: string,
     ): Promise<AuthClientResponse> => {
-
         try {
             const userPasswordRef = ref(db, `users/${username}/password`)
             const pw = await get(userPasswordRef)
 
-            if (pw.val() !== password) {
+            const comparePasswordRes = await bcryptUtil.compare(
+                password,
+                pw.val(),
+            )
+
+            if (!comparePasswordRes) {
                 return {
                     status: 400,
                     reason: "password doesn't match current password",
@@ -49,7 +60,9 @@ export const authClient = {
                 }
             }
 
-            await set(userPasswordRef, newPassword)
+            const hashedPassword = await bcryptUtil.hash(newPassword)
+
+            await set(userPasswordRef, hashedPassword)
             return { status: 200 }
         } catch (e) {
             return {

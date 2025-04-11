@@ -2,6 +2,7 @@ import { ref, set, get, remove } from 'firebase/database'
 import { db } from '@/config/firebase'
 import { User, userFactory, UserProfile, UserProfileStyle } from '@/models'
 import { UserClientResponse, UserGetResponse } from '@/client/types'
+import { bcryptUtil } from '@/utils'
 
 export const userClient = {
     get: async (username: string): Promise<UserGetResponse> => {
@@ -27,7 +28,6 @@ export const userClient = {
         nickname: string,
         password: string,
     ): Promise<UserGetResponse> => {
-
         try {
             const userRef = ref(db, `/users/${username}`)
             const snapshot = await get(userRef)
@@ -36,10 +36,12 @@ export const userClient = {
                 return { status: 400, reason: 'Username already exists.' }
             }
 
+            const hashedPassword = await bcryptUtil.hash(password)
+
             const newUser = userFactory.createUser({
                 username,
                 nickname,
-                password,
+                password: hashedPassword,
             })
 
             await set(userRef, newUser)
@@ -114,8 +116,6 @@ export const userClient = {
         username: string,
         nickname: string,
     ): Promise<UserClientResponse> => {
-        
-
         const userNicknameRef = ref(db, `users/${username}/nickname`)
         try {
             await set(userNicknameRef, nickname)

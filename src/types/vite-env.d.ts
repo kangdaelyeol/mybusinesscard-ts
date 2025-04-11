@@ -14,6 +14,7 @@ interface ImportMetaEnv {
     readonly VITE_MEASUREMENT_ID: string
     readonly VITE_JWT_SECRET: string
     readonly VITE_JWT_ALG: string
+    readonly VITE_BCRYPT_SALT_ROUND: number
 }
 
 interface ImportMeta {
