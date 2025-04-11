@@ -12,6 +12,15 @@ interface GenerateTokenResponse {
     refreshToken: string | null
 }
 
+type VerityTokenResponse =
+    | {
+          ok: false
+      }
+    | {
+          ok: true
+          data: jose.JWTPayload
+      }
+
 export const jwtUtil = {
     generateToken: async (
         username: string,
@@ -79,24 +88,16 @@ export const jwtUtil = {
         }
     },
 
-    verifyAccessToken: async (username: string): Promise<boolean> => {
+    verifyAccessToken: async (token: string): Promise<VerityTokenResponse> => {
         try {
-            const token = localStorage.getItem(
-                LOCALSTORAGE_JWT_ACCESS_TOKEN_NAME,
-            )
-            if (!token) return false
-
             const { payload } = await jose.jwtVerify(token, JWT_SECRET)
 
-            if (!('username' in { payload })) return false
-
-            if (payload.username === username) return true
-            else return false
+            return { ok: true, data: payload }
         } catch (e) {
             console.error(
                 `Invalid(expired) token or Failed to verify JWT token - ${e}`,
             )
-            return false
+            return { ok: false }
         }
     },
 

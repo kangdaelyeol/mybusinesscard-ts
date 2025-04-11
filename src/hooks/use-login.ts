@@ -9,7 +9,8 @@ import { ToasterMessageContext } from '@/context'
 import { initCards } from '@/store/cards-slice'
 import { setUser } from '@/store/user-slice'
 import { authService } from '@/services/auth-service'
-import { cardService, userService, jwtService } from '@/services'
+import { cardService, userService } from '@/services'
+import { jwtUtil } from '@/utils'
 
 export const useLogin = () => {
     const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
@@ -67,7 +68,7 @@ export const useLogin = () => {
                 return
             }
 
-            const jwtToken = await jwtService.generateToken(
+            const jwtToken = await jwtUtil.generateToken(
                 username,
                 loginInput.remember,
             )

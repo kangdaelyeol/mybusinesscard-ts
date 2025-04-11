@@ -10,9 +10,40 @@ import {
     CreateCardResponse,
     GetCardListResponse,
 } from '@/services/types'
+import { jwtUtil } from '@/utils'
 
 export const cardService = {
-    create: async (card: Card): Promise<CreateCardResponse> => {
+    create: async (
+        card: Card,
+        username: string,
+    ): Promise<CreateCardResponse> => {
+        const accessToken = jwtUtil.getAccessToken()
+
+        if (!accessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to verify access token',
+            }
+        }
+
+        const usernameFromAccessToken = await jwtUtil.getUsernameByAccessToken(
+            accessToken,
+        )
+
+        if (!usernameFromAccessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to verify access token',
+            }
+        }
+
+        if (username !== usernameFromAccessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to authorize user',
+            }
+        }
+
         const res = await cardClient.create(card)
         if (res.status === 200) {
             return {
@@ -47,11 +78,38 @@ export const cardService = {
             throw new Error('Unexpected error - update profile in card service')
         }
     },
-    
+
     updateProfile: async (
         cardId: string,
         profile: CardProfile,
+        username: string,
     ): Promise<UpdateProfileResponse> => {
+        const accessToken = jwtUtil.getAccessToken()
+
+        if (!accessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to verify access token',
+            }
+        }
+
+        const usernameFromAccessToken = await jwtUtil.getUsernameByAccessToken(
+            accessToken,
+        )
+
+        if (!usernameFromAccessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to verify access token',
+            }
+        }
+
+        if (username !== usernameFromAccessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to authorize user',
+            }
+        }
         const res = await cardClient.updateProfile(cardId, profile)
         if (res.status === 200) {
             return {
@@ -72,7 +130,34 @@ export const cardService = {
     updateProfileStyle: async (
         cardId: string,
         style: CardStyle,
+        username: string,
     ): Promise<UpdateProfileStyleResponse> => {
+        const accessToken = jwtUtil.getAccessToken()
+
+        if (!accessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to verify access token',
+            }
+        }
+
+        const usernameFromAccessToken = await jwtUtil.getUsernameByAccessToken(
+            accessToken,
+        )
+
+        if (!usernameFromAccessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to verify access token',
+            }
+        }
+
+        if (username !== usernameFromAccessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to authorize user',
+            }
+        }
         const res = await cardClient.updateProfileStyle(cardId, style)
         if (res.status === 200) {
             return {
@@ -159,7 +244,36 @@ export const cardService = {
         }
     },
 
-    delete: async (cardId: string): Promise<DeleteResponse> => {
+    delete: async (
+        cardId: string,
+        username: string,
+    ): Promise<DeleteResponse> => {
+        const accessToken = jwtUtil.getAccessToken()
+
+        if (!accessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to verify access token',
+            }
+        }
+
+        const usernameFromAccessToken = await jwtUtil.getUsernameByAccessToken(
+            accessToken,
+        )
+
+        if (!usernameFromAccessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to verify access token',
+            }
+        }
+
+        if (username !== usernameFromAccessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to authorize user',
+            }
+        }
         const res = await cardClient.remove(cardId)
         if (res.status === 200) {
             return {

@@ -3,13 +3,17 @@ import { useDispatch } from 'react-redux'
 import { ToasterMessageContext } from '@/context'
 import { initCards } from '@/store/cards-slice'
 import { setUser } from '@/store/user-slice'
-import { jwtService, userService } from '@/services'
+import { userService } from '@/services'
 import { LOCALSTORAGE_JWT_ACCESS_TOKEN_NAME } from '@/constants'
+import { jwtUtil } from '@/utils'
+import { useNavigate } from 'react-router-dom'
 
 export const useSignup = () => {
     const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
 
     const dispatch = useDispatch()
+
+    const navigate = useNavigate()
 
     const [errorMessage, setErrorMessage] = useState('')
     const [loading, setLoading] = useState(false)
@@ -60,7 +64,7 @@ export const useSignup = () => {
             if (createUserRes.ok) {
                 const { username, profile, nickname } = createUserRes.data
 
-                const jwtToken = await jwtService.generateToken(username, false)
+                const jwtToken = await jwtUtil.generateToken(username, false)
                 localStorage.setItem(
                     LOCALSTORAGE_JWT_ACCESS_TOKEN_NAME,
                     jwtToken.accessToken,
@@ -69,6 +73,7 @@ export const useSignup = () => {
                 dispatch(setUser({ username, profile, nickname }))
                 dispatch(initCards({ cards: [] }))
                 setToasterMessageTimeOut('Sign up sucessfully!!')
+                navigate('/')
             } else {
                 setErrorMessage(createUserRes.reason)
                 setLoading(false)

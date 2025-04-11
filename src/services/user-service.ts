@@ -6,6 +6,7 @@ import {
     GetUserResponse,
     UpdateUserNicknameResponse,
 } from '@/services/types'
+import { jwtUtil } from '@/utils'
 export const userService = {
     get: async (username: string): Promise<GetUserResponse> => {
         const validateUsernameRes = userValidator.username(username)
@@ -81,7 +82,7 @@ export const userService = {
                 ok: true,
                 data: res.data,
             }
-        } else if (res.status !== 400 && 'reason' in res) {
+        } else if (res.status === 400 && 'reason' in res) {
             return {
                 ok: false,
                 reason: res.reason,
@@ -94,13 +95,41 @@ export const userService = {
     updateProfileStyle: async (
         username: string,
         style: UserProfileStyle,
-    ): Promise<UserProfileStyle | null> => {
+    ): Promise<
+        { ok: false; reason: string } | { ok: true; data: UserProfileStyle }
+    > => {
+        const accessToken = jwtUtil.getAccessToken()
+
+        if (!accessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to verify access token',
+            }
+        }
+
+        const usernameFromAccessToken = await jwtUtil.getUsernameByAccessToken(
+            accessToken,
+        )
+
+        if (!usernameFromAccessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to verify access token',
+            }
+        }
+
+        if (username !== usernameFromAccessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to authorize user',
+            }
+        }
         const res = await userClient.updateProfileStyle(username, style)
         if (res.status === 200) {
-            return style
+            return { ok: true, data: style }
         } else if (res.status !== 200 && 'reason' in res) {
             console.error(`Failed to update user profile style - ${res.reason}`)
-            return null
+            return { ok: false, reason: res.reason }
         } else {
             throw new Error(
                 'Unexpected Error - updating profile style in userservice',
@@ -111,13 +140,41 @@ export const userService = {
     updateProfile: async (
         username: string,
         profile: UserProfile,
-    ): Promise<UserProfile | null> => {
+    ): Promise<
+        { ok: true; data: UserProfile } | { ok: false; reason: string }
+    > => {
+        const accessToken = jwtUtil.getAccessToken()
+
+        if (!accessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to verify access token',
+            }
+        }
+
+        const usernameFromAccessToken = await jwtUtil.getUsernameByAccessToken(
+            accessToken,
+        )
+
+        if (!usernameFromAccessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to verify access token',
+            }
+        }
+
+        if (username !== usernameFromAccessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to authorize user',
+            }
+        }
         const res = await userClient.updateProfile(username, profile)
         if (res.status === 200) {
-            return profile
+            return { ok: true, data: profile }
         } else if (res.status !== 200 && 'reason' in res) {
             console.error(`Failed to update user profile - ${res.reason}`)
-            return null
+            return { ok: false, reason: res.reason }
         } else {
             throw new Error(
                 'Unexpected Error - updating profile in userservice',
@@ -129,6 +186,32 @@ export const userService = {
         username: string,
         nickname: string,
     ): Promise<UpdateUserNicknameResponse> => {
+        const accessToken = jwtUtil.getAccessToken()
+
+        if (!accessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to verify access token',
+            }
+        }
+
+        const usernameFromAccessToken = await jwtUtil.getUsernameByAccessToken(
+            accessToken,
+        )
+
+        if (!usernameFromAccessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to verify access token',
+            }
+        }
+
+        if (username !== usernameFromAccessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to authorize user',
+            }
+        }
         const validateNicknameRes = userValidator.nickname(nickname)
 
         if (validateNicknameRes.isValid === false) {
@@ -151,13 +234,41 @@ export const userService = {
         }
     },
 
-    delete: async (username: string): Promise<boolean> => {
+    delete: async (
+        username: string,
+    ): Promise<{ ok: true } | { ok: false; reason: string }> => {
+        const accessToken = jwtUtil.getAccessToken()
+
+        if (!accessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to verify access token',
+            }
+        }
+
+        const usernameFromAccessToken = await jwtUtil.getUsernameByAccessToken(
+            accessToken,
+        )
+
+        if (!usernameFromAccessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to verify access token',
+            }
+        }
+
+        if (username !== usernameFromAccessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to authorize user',
+            }
+        }
         const res = await userClient.remove(username)
 
-        if (res.status === 200) return true
+        if (res.status === 200) return { ok: true }
         else if (res.status && 'reason' in res) {
             console.error(`Failed to delete user - ${res.reason}`)
-            return false
+            return { ok: false, reason: res.reason }
         } else {
             throw new Error('Unexpected Error - deleting user in userservice')
         }

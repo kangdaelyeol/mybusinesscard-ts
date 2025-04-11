@@ -1,6 +1,7 @@
 import { authClient } from '@/client'
 import { userValidator } from '@/services/validate'
 import { ChangePasswordResponse, SignInResponse } from '@/services/types'
+import { jwtUtil } from '@/utils'
 
 export const authService = {
     signIn: async (
@@ -47,6 +48,32 @@ export const authService = {
         newPassword: string,
         confirmPassword: string,
     ): Promise<ChangePasswordResponse> => {
+        const accessToken = jwtUtil.getAccessToken()
+
+        if (!accessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to verify access token',
+            }
+        }
+
+        const usernameFromAccessToken = await jwtUtil.getUsernameByAccessToken(
+            accessToken,
+        )
+
+        if (!usernameFromAccessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to verify access token',
+            }
+        }
+
+        if (username !== usernameFromAccessToken) {
+            return {
+                ok: false,
+                reason: 'Failed to authorize user',
+            }
+        }
         const validatePasswordRes = userValidator.password(newPassword)
         if (validatePasswordRes.isValid === false) {
             return {

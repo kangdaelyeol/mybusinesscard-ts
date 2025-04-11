@@ -91,12 +91,12 @@ export const useProfileDetail = () => {
                 },
             })
 
-            const updatedProfile = await userService.updateProfile(
+            const updateRes = await userService.updateProfile(
                 userState.username,
                 newProfile,
             )
 
-            if (!updatedProfile) {
+            if (!updateRes.ok) {
                 setToasterMessageTimeOut('Failed to update Profile')
                 cloudinaryService.deleteImage(
                     newProfile.assetId,
@@ -113,7 +113,7 @@ export const useProfileDetail = () => {
                 )
             }
 
-            dispatch(updateUserProfile({ profile: updatedProfile }))
+            dispatch(updateUserProfile({ profile: updateRes.data }))
 
             setFileLoading(false)
             setImageStyling(true)

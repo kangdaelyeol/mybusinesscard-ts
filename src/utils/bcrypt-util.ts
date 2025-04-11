@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs'
 export const bcryptUtil = {
     hash: async (content: string): Promise<string> => {
         const salt = await bcrypt.genSalt(
-            import.meta.env.VITE_BCRYPT_SALT_ROUND,
+            Number(import.meta.env.VITE_BCRYPT_SALT_ROUND),
         )
         const hash = await bcrypt.hash(content, salt)
 
