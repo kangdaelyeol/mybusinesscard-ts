@@ -5,7 +5,7 @@ import { initCards } from '@/store/cards-slice'
 import { setUser } from '@/store/user-slice'
 import { userService } from '@/services'
 import { LOCALSTORAGE_JWT_ACCESS_TOKEN_NAME } from '@/constants'
-import { jwtUtil } from '@/utils'
+import { jwtUtil } from '@/auth'
 import { useNavigate } from 'react-router-dom'
 
 export const useSignup = () => {

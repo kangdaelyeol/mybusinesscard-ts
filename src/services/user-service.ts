@@ -6,7 +6,7 @@ import {
     GetUserResponse,
     UpdateUserNicknameResponse,
 } from '@/services/types'
-import { jwtUtil } from '@/utils'
+import { jwtUtil } from '@/auth'
 
 export const userService = {
     get: async (username: string): Promise<GetUserResponse> => {

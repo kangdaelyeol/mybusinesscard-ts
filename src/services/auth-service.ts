@@ -1,7 +1,7 @@
 import { authClient } from '@/client'
 import { userValidator } from '@/services/validate'
 import { ChangePasswordResponse, SignInResponse } from '@/services/types'
-import { jwtUtil } from '@/utils'
+import { jwtUtil } from '@/auth'
 
 export const authService = {
     signIn: async (

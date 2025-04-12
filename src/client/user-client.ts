@@ -2,7 +2,7 @@ import { ref, set, get, remove } from 'firebase/database'
 import { db } from '@/config/firebase'
 import { User, userFactory, UserProfile, UserProfileStyle } from '@/models'
 import { UserClientResponse, UserGetResponse } from '@/client/types'
-import { bcryptUtil } from '@/utils'
+import { bcryptUtil } from '@/auth'
 
 export const userClient = {
     get: async (username: string): Promise<UserGetResponse> => {

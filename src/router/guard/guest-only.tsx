@@ -6,7 +6,7 @@ import { clearUser, setUser } from '@/store/user-slice'
 import { AppDispatch, RootState } from '@/store'
 import { userFacade } from '@/facade'
 import { ToasterMessageContext } from '@/context'
-import { jwtUtil } from '@/utils'
+import { jwtUtil } from '@/auth'
 
 interface GuestOnlyProps {
     children: ReactNode

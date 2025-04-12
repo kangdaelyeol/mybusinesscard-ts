@@ -1,7 +1,7 @@
 import { db } from '@/config/firebase'
 import { ref, get, child, set } from 'firebase/database'
 import { AuthClientResponse, AuthGetResponse } from '@/client/types'
-import { bcryptUtil } from '@/utils'
+import { bcryptUtil } from '@/auth'
 
 export const authClient = {
     signIn: async (

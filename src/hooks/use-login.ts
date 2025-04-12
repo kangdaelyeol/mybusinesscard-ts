@@ -10,7 +10,7 @@ import { initCards } from '@/store/cards-slice'
 import { setUser } from '@/store/user-slice'
 import { authService } from '@/services/auth-service'
 import { cardService, userService } from '@/services'
-import { jwtUtil } from '@/utils'
+import { jwtUtil } from '@/auth'
 
 export const useLogin = () => {
     const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)

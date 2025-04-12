@@ -12,7 +12,7 @@ import {
 import { RootState } from '@/store'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
 import { cloudinaryService, userService } from '@/services'
-import { jwtUtil } from '@/utils'
+import { jwtUtil } from '@/auth'
 
 export const useProfileDetail = () => {
     const { subscribe, unSubscribe, publish } = useContext(PubSubContext)

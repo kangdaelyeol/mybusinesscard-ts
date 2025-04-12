@@ -13,7 +13,7 @@ import { userFactory, UserProfileStyle } from '@/models'
 import { PubSubContext, ToasterMessageContext } from '@/context'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
 import { cloudinaryService, userService } from '@/services'
-import { jwtUtil } from '@/utils'
+import { jwtUtil } from '@/auth'
 
 export const useAccountDetail = () => {
     const { publish, subscribe, unSubscribe } = useContext(PubSubContext)

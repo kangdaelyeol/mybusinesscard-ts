@@ -10,7 +10,7 @@ import {
     CreateCardResponse,
     GetCardListResponse,
 } from '@/services/types'
-import { jwtUtil } from '@/utils'
+import { jwtUtil } from '@/auth'
 
 export const cardService = {
     create: async (

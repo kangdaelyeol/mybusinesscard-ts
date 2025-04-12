@@ -6,7 +6,7 @@ import { setUser } from '@/store/user-slice'
 import { AppDispatch } from '@/store'
 import { userFacade } from '@/facade'
 import { ToasterMessageContext } from '@/context'
-import { jwtUtil } from '@/utils'
+import { jwtUtil } from '@/auth'
 
 interface LoggedInOnlyProps {
     children: ReactNode
