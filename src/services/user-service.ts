@@ -6,7 +6,7 @@ import {
     GetUserResponse,
     UpdateUserNicknameResponse,
 } from '@/services/types'
-import { jwtUtil } from '@/auth'
+import { jwtUtil, authGuard } from '@/auth'
 
 export const userService = {
     get: async (username: string): Promise<GetUserResponse> => {
@@ -99,32 +99,18 @@ export const userService = {
     ): Promise<
         { ok: false; reason: string } | { ok: true; data: UserProfileStyle }
     > => {
-        const accessToken = jwtUtil.getAccessToken()
-
-        if (!accessToken) {
-            return {
-                ok: false,
-                reason: 'Failed to verify access token',
-            }
-        }
-
-        const usernameFromAccessToken = await jwtUtil.getUsernameByAccessToken(
-            accessToken,
+        const verifyTokenAndUserRes = await authGuard.verifyTokenAndUsername(
+            username,
         )
 
-        if (!usernameFromAccessToken) {
+        if (!verifyTokenAndUserRes) {
+            jwtUtil.deleteToken()
             return {
                 ok: false,
-                reason: 'Failed to verify access token',
+                reason: 'failed to authenticate token or user',
             }
         }
 
-        if (username !== usernameFromAccessToken) {
-            return {
-                ok: false,
-                reason: 'Failed to authorize user',
-            }
-        }
         const res = await userClient.updateProfileStyle(username, style)
         if (res.status === 200) {
             return { ok: true, data: style }
@@ -144,32 +130,18 @@ export const userService = {
     ): Promise<
         { ok: true; data: UserProfile } | { ok: false; reason: string }
     > => {
-        const accessToken = jwtUtil.getAccessToken()
-
-        if (!accessToken) {
-            return {
-                ok: false,
-                reason: 'Failed to verify access token',
-            }
-        }
-
-        const usernameFromAccessToken = await jwtUtil.getUsernameByAccessToken(
-            accessToken,
+        const verifyTokenAndUserRes = await authGuard.verifyTokenAndUsername(
+            username,
         )
 
-        if (!usernameFromAccessToken) {
+        if (!verifyTokenAndUserRes) {
+            jwtUtil.deleteToken()
             return {
                 ok: false,
-                reason: 'Failed to verify access token',
+                reason: 'failed to authenticate token or user',
             }
         }
 
-        if (username !== usernameFromAccessToken) {
-            return {
-                ok: false,
-                reason: 'Failed to authorize user',
-            }
-        }
         const res = await userClient.updateProfile(username, profile)
         if (res.status === 200) {
             return { ok: true, data: profile }
@@ -187,32 +159,18 @@ export const userService = {
         username: string,
         nickname: string,
     ): Promise<UpdateUserNicknameResponse> => {
-        const accessToken = jwtUtil.getAccessToken()
-
-        if (!accessToken) {
-            return {
-                ok: false,
-                reason: 'Failed to verify access token',
-            }
-        }
-
-        const usernameFromAccessToken = await jwtUtil.getUsernameByAccessToken(
-            accessToken,
+        const verifyTokenAndUserRes = await authGuard.verifyTokenAndUsername(
+            username,
         )
 
-        if (!usernameFromAccessToken) {
+        if (!verifyTokenAndUserRes) {
+            jwtUtil.deleteToken()
             return {
                 ok: false,
-                reason: 'Failed to verify access token',
+                reason: 'failed to authenticate token or user',
             }
         }
 
-        if (username !== usernameFromAccessToken) {
-            return {
-                ok: false,
-                reason: 'Failed to authorize user',
-            }
-        }
         const validateNicknameRes = userValidator.nickname(nickname)
 
         if (validateNicknameRes.isValid === false) {
@@ -238,32 +196,18 @@ export const userService = {
     delete: async (
         username: string,
     ): Promise<{ ok: true } | { ok: false; reason: string }> => {
-        const accessToken = jwtUtil.getAccessToken()
-
-        if (!accessToken) {
-            return {
-                ok: false,
-                reason: 'Failed to verify access token',
-            }
-        }
-
-        const usernameFromAccessToken = await jwtUtil.getUsernameByAccessToken(
-            accessToken,
+        const verifyTokenAndUserRes = await authGuard.verifyTokenAndUsername(
+            username,
         )
 
-        if (!usernameFromAccessToken) {
+        if (!verifyTokenAndUserRes) {
+            jwtUtil.deleteToken()
             return {
                 ok: false,
-                reason: 'Failed to verify access token',
+                reason: 'failed to authenticate token or user',
             }
         }
 
-        if (username !== usernameFromAccessToken) {
-            return {
-                ok: false,
-                reason: 'Failed to authorize user',
-            }
-        }
         const res = await userClient.remove(username)
 
         if (res.status === 200) return { ok: true }
