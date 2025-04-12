@@ -1,5 +1,3 @@
-import { User } from '@/models'
-
 interface ErrorResponse {
     status: number
     reason: string

@@ -1,1 +1,1 @@
-export * from "@/facade/types/user-facade"
+export * from '@/facade/types/user-facade-types'
