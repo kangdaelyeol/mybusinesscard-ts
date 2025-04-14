@@ -1,4 +1,4 @@
-import { Card, CardProfile, CardStyle } from '@/models'
+import { Card, CardProfile, CardStyle, CardTheme } from '@/models'
 import { db } from '@/config/firebase'
 import {
     ref,
@@ -9,10 +9,10 @@ import {
     equalTo,
     get,
 } from 'firebase/database'
-import { CardListResponse, CardClientResponse } from '@/client/types'
+import { ClientResponse } from '@/client/types'
 
 export const cardClient = {
-    getList: async (username: string): Promise<CardListResponse> => {
+    getList: async (username: string): Promise<ClientResponse<Card[]>> => {
         const cardRef = ref(db, 'cards')
 
         const dbQuery = query(
@@ -39,12 +39,13 @@ export const cardClient = {
         }
     },
 
-    create: async (card: Card): Promise<CardClientResponse> => {
+    create: async (card: Card): Promise<ClientResponse<Card>> => {
         try {
             const cardRef = ref(db, `cards/${card.id}`)
             await set(cardRef, card)
             return {
                 status: 200,
+                data: card,
             }
         } catch (e) {
             console.error(e)
@@ -58,12 +59,13 @@ export const cardClient = {
     updateName: async (
         cardId: string,
         value: string,
-    ): Promise<CardClientResponse> => {
+    ): Promise<ClientResponse<string>> => {
         try {
             const cardRef = ref(db, `cards/${cardId}/name`)
             await set(cardRef, value)
             return {
                 status: 200,
+                data: value,
             }
         } catch (e) {
             console.error(e)
@@ -77,12 +79,13 @@ export const cardClient = {
     updateDescription: async (
         cardId: string,
         value: string,
-    ): Promise<CardClientResponse> => {
+    ): Promise<ClientResponse<string>> => {
         try {
             const cardRef = ref(db, `cards/${cardId}/description`)
             await set(cardRef, value)
             return {
                 status: 200,
+                data: value,
             }
         } catch (e) {
             console.error(e)
@@ -95,13 +98,14 @@ export const cardClient = {
 
     updateTheme: async (
         cardId: string,
-        value: string,
-    ): Promise<CardClientResponse> => {
+        value: CardTheme,
+    ): Promise<ClientResponse<CardTheme>> => {
         try {
             const cardRef = ref(db, `cards/${cardId}/theme`)
             await set(cardRef, value)
             return {
                 status: 200,
+                data: value,
             }
         } catch (e) {
             console.error(e)
@@ -115,12 +119,13 @@ export const cardClient = {
     updateProfile: async (
         cardId: string,
         value: CardProfile,
-    ): Promise<CardClientResponse> => {
+    ): Promise<ClientResponse<CardProfile>> => {
         try {
             const cardRef = ref(db, `cards/${cardId}/profile`)
             await set(cardRef, value)
             return {
                 status: 200,
+                data: value,
             }
         } catch (e) {
             return {
@@ -133,12 +138,13 @@ export const cardClient = {
     updateProfileStyle: async (
         cardId: string,
         value: CardStyle,
-    ): Promise<CardClientResponse> => {
+    ): Promise<ClientResponse<CardStyle>> => {
         try {
             const cardRef = ref(db, `cards/${cardId}/profile/style`)
             await set(cardRef, value)
             return {
                 status: 200,
+                data: value,
             }
         } catch (e) {
             console.error(e)
@@ -149,7 +155,7 @@ export const cardClient = {
         }
     },
 
-    remove: async (cardId: string): Promise<CardClientResponse> => {
+    remove: async (cardId: string): Promise<ClientResponse> => {
         try {
             const cardRef = ref(db, `cards/${cardId}`)
             await remove(cardRef)

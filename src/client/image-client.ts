@@ -5,15 +5,10 @@ import {
     CLOUDINARY_DELETE_REQUEST_URL,
     CLOUDINARY_UPLOAD_REQUEST_URL,
 } from '@/constants'
-import {
-    UploadCloudinaryResponse,
-    DeleteCloudinaryResponse,
-} from '@/client/types'
+import { ClientResponse } from '@/client/types'
 
 export const imageClient = {
-    uploadInCloudinary: async (
-        file: File,
-    ): Promise<UploadCloudinaryResponse> => {
+    uploadInCloudinary: async (file: File): Promise<ClientResponse<any>> => {
         if (file?.size > MAX_PROFILE_SIZE || !file.type.startsWith('image')) {
             return {
                 status: 400,
@@ -42,7 +37,7 @@ export const imageClient = {
     deleteInCloudinary: async (
         assetId: string,
         publicId: string,
-    ): Promise<DeleteCloudinaryResponse> => {
+    ): Promise<ClientResponse> => {
         if (assetId === '') {
             return {
                 status: 400,
@@ -53,7 +48,10 @@ export const imageClient = {
 
         const timestamp = cloudinaryHelper.getTimestamp()
 
-        const sigSHA1 = cloudinaryHelper.generateSignatureSHA1(publicId, timestamp)
+        const sigSHA1 = cloudinaryHelper.generateSignatureSHA1(
+            publicId,
+            timestamp,
+        )
 
         formData.append('asset_id', assetId)
         formData.append('public_id', publicId)

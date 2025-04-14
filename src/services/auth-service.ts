@@ -1,13 +1,13 @@
 import { authClient } from '@/client'
 import { userValidator } from '@/services/validate'
-import { ChangePasswordResponse, SignInResponse } from '@/services/types'
+import { ServiceResponse } from '@/services/types'
 import { jwtUtil, authGuard } from '@/auth'
 
 export const authService = {
     signIn: async (
         username: string,
         password: string,
-    ): Promise<SignInResponse> => {
+    ): Promise<ServiceResponse<string>> => {
         const validateUsernameRes = userValidator.username(username)
 
         if (validateUsernameRes.isValid === false) {
@@ -33,6 +33,11 @@ export const authService = {
                 reason: authRes.reason,
             }
         } else if (authRes.status === 200 && 'token' in authRes) {
+            if (typeof authRes.token !== 'string') {
+                throw new Error(
+                    'Unexpected Error - token type error in auth service - Sign in',
+                )
+            }
             return {
                 ok: true,
                 data: authRes.token,
@@ -47,7 +52,7 @@ export const authService = {
         password: string,
         newPassword: string,
         confirmPassword: string,
-    ): Promise<ChangePasswordResponse> => {
+    ): Promise<ServiceResponse> => {
         const verifyTokenAndUserRes = await authGuard.verifyTokenAndUsername(
             username,
         )

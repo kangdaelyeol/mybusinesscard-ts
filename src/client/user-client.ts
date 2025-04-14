@@ -1,11 +1,11 @@
 import { ref, set, get, remove } from 'firebase/database'
 import { db } from '@/config/firebase'
 import { User, userFactory, UserProfile, UserProfileStyle } from '@/models'
-import { UserClientResponse, UserGetResponse } from '@/client/types'
+import { ClientResponse } from '@/client/types'
 import { bcryptUtil } from '@/auth'
 
 export const userClient = {
-    get: async (username: string): Promise<UserGetResponse> => {
+    get: async (username: string): Promise<ClientResponse<User>> => {
         const userRef = ref(db, `users/${username}`)
         const snapshot = await get(userRef)
         if (!snapshot.exists()) {
@@ -27,7 +27,7 @@ export const userClient = {
         username: string,
         nickname: string,
         password: string,
-    ): Promise<UserGetResponse> => {
+    ): Promise<ClientResponse<User>> => {
         try {
             const userRef = ref(db, `/users/${username}`)
             const snapshot = await get(userRef)
@@ -56,7 +56,7 @@ export const userClient = {
         }
     },
 
-    remove: async (username: string): Promise<UserClientResponse> => {
+    remove: async (username: string): Promise<ClientResponse> => {
         const userRef = ref(db, `/users/${username}`)
         try {
             await remove(userRef)
@@ -76,13 +76,14 @@ export const userClient = {
     updateProfile: async (
         username: string,
         profile: UserProfile,
-    ): Promise<UserClientResponse> => {
+    ): Promise<ClientResponse<UserProfile>> => {
         const userProfileRef = ref(db, `users/${username}/profile`)
 
         try {
             await set(userProfileRef, profile)
             return {
                 status: 200,
+                data: profile,
             }
         } catch (e) {
             console.error(e)
@@ -96,12 +97,13 @@ export const userClient = {
     updateProfileStyle: async (
         username: string,
         style: UserProfileStyle,
-    ): Promise<UserClientResponse> => {
+    ): Promise<ClientResponse<UserProfileStyle>> => {
         const userProfileStyleRef = ref(db, `users/${username}/profile/style`)
         try {
             await set(userProfileStyleRef, style)
             return {
                 status: 200,
+                data: style,
             }
         } catch (e) {
             console.error(e)
@@ -115,12 +117,13 @@ export const userClient = {
     updateNickname: async (
         username: string,
         nickname: string,
-    ): Promise<UserClientResponse> => {
+    ): Promise<ClientResponse<string>> => {
         const userNicknameRef = ref(db, `users/${username}/nickname`)
         try {
             await set(userNicknameRef, nickname)
             return {
                 status: 200,
+                data: nickname,
             }
         } catch (e) {
             console.error(e)

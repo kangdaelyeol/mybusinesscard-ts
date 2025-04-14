@@ -1,15 +1,11 @@
 import { userClient } from '@/client'
-import { UserProfile, UserProfileStyle } from '@/models'
+import { User, UserProfile, UserProfileStyle } from '@/models'
 import { userValidator } from '@/services/validate'
-import {
-    CreateUserResponse,
-    GetUserResponse,
-    UpdateUserNicknameResponse,
-} from '@/services/types'
+import { ServiceResponse } from '@/services/types'
 import { jwtUtil, authGuard } from '@/auth'
 
 export const userService = {
-    get: async (username: string): Promise<GetUserResponse> => {
+    get: async (username: string): Promise<ServiceResponse<User>> => {
         const validateUsernameRes = userValidator.username(username)
 
         if (validateUsernameRes.isValid === false) {
@@ -41,7 +37,7 @@ export const userService = {
         password: string,
         confirmPassword: string,
         nickname: string,
-    ): Promise<CreateUserResponse> => {
+    ): Promise<ServiceResponse<User>> => {
         const validateUsernameRes = userValidator.username(username)
 
         if (validateUsernameRes.isValid === false) {
@@ -96,9 +92,7 @@ export const userService = {
     updateProfileStyle: async (
         username: string,
         style: UserProfileStyle,
-    ): Promise<
-        { ok: false; reason: string } | { ok: true; data: UserProfileStyle }
-    > => {
+    ): Promise<ServiceResponse<UserProfileStyle>> => {
         const verifyTokenAndUserRes = await authGuard.verifyTokenAndUsername(
             username,
         )
@@ -127,9 +121,7 @@ export const userService = {
     updateProfile: async (
         username: string,
         profile: UserProfile,
-    ): Promise<
-        { ok: true; data: UserProfile } | { ok: false; reason: string }
-    > => {
+    ): Promise<ServiceResponse<UserProfile>> => {
         const verifyTokenAndUserRes = await authGuard.verifyTokenAndUsername(
             username,
         )
@@ -158,7 +150,7 @@ export const userService = {
     updateNickname: async (
         username: string,
         nickname: string,
-    ): Promise<UpdateUserNicknameResponse> => {
+    ): Promise<ServiceResponse<string>> => {
         const verifyTokenAndUserRes = await authGuard.verifyTokenAndUsername(
             username,
         )
@@ -193,9 +185,7 @@ export const userService = {
         }
     },
 
-    delete: async (
-        username: string,
-    ): Promise<{ ok: true } | { ok: false; reason: string }> => {
+    delete: async (username: string): Promise<ServiceResponse> => {
         const verifyTokenAndUserRes = await authGuard.verifyTokenAndUsername(
             username,
         )
