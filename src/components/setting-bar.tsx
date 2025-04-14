@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import classNames from 'classnames'
-import { useSettingBar } from '@/hooks'
+import { useSettingBar } from '@/controllers'
 import { ResponsiveContext } from '@/context'
 
 type SettingBarProps = {

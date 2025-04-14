@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 import { ThemeContext } from '@/context'
-import { useSignup } from '@/hooks'
+import { useSignup } from '@/controllers'
 import { LoadingSpinner } from '@/components'
 
 export const SignUp = () => {

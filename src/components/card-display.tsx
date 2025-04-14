@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { CARD_IMAGE_SIZE } from '@/constants'
-import { useCardDisplay } from '@/hooks'
+import { useCardDisplay } from '@/controllers'
 import { ImageStyling, ImgDisplay } from '@/components'
 import { Card } from '@/models'
 

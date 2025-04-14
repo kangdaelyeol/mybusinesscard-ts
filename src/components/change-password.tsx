@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { useContext } from 'react'
 import { ThemeContext } from '@/context'
 import { LoadingSpinner } from '@/components'
-import { useChangePassword } from '@/hooks'
+import { useChangePassword } from '@/controllers'
 
 export const ChangePassword = () => {
     const { theme } = useContext(ThemeContext)

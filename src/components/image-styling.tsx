@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { SettingBar } from '@/components'
 import { MAX_SCALE_VALUE } from '@/constants'
-import { useAvatarSizing } from '@/hooks'
+import { useAvatarSizing } from '@/controllers'
 import { ResponsiveContext } from '@/context'
 import { CardStyle, UserProfileStyle } from '@/models'
 import { imageHelper } from '@/helpers'

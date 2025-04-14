@@ -1,7 +1,7 @@
 import { useRef, useContext } from 'react'
 import classNames from 'classnames'
 import { ThemeContext } from '@/context'
-import { useCardMaker } from '@/hooks'
+import { useCardMaker } from '@/controllers'
 import { LoadingSpinner } from '@/components'
 
 export const CardMaker = () => {

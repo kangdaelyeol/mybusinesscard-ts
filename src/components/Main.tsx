@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import classNames from 'classnames'
 import { ThemeContext } from '@/context'
 import { CardDisplay, CreateCard, CardEditor } from '@/components'
-import { useMain } from '@/hooks'
+import { useMain } from '@/controllers'
 
 export const Main = () => {
     const { theme } = useContext(ThemeContext)

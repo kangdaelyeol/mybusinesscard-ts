@@ -1,8 +1,8 @@
 import { useContext } from 'react'
 import classNames from 'classnames'
 import { ThemeContext } from '@/context'
-import { useAccountDetail } from '@/hooks'
-import {ImageStyling, ImgDisplay, LoadingSpinner} from '@/components'
+import { useAccountDetail } from '@/controllers'
+import { ImageStyling, ImgDisplay, LoadingSpinner } from '@/components'
 
 export const AccountDetail = () => {
     const { theme } = useContext(ThemeContext)

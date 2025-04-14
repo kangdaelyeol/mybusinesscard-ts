@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import classNames from 'classnames'
 import { ThemeContext } from '@/context'
-import { useHeader } from '@/hooks'
+import { useHeader } from '@/controllers'
 import { ImgDisplay, ProfileDetail } from '@/components'
 
 export const Header = () => {

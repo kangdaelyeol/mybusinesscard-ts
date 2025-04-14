@@ -1,7 +1,7 @@
 import { useRef, useContext } from 'react'
 import classNames from 'classnames'
 import { ThemeContext } from '@/context'
-import { useCardEditor } from '@/hooks'
+import { useCardEditor } from '@/controllers'
 import { LoadingSpinner } from '@/components'
 import { Card } from '@/models'
 
