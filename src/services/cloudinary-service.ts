@@ -1,8 +1,14 @@
 import { imageClient } from '@/client'
-import { CloudinaryImage } from '@/services/types'
+import {
+    CloudinaryImage,
+    SERVICE_ERROR_TYPE,
+    ServiceResponse,
+} from '@/services/types'
 
 export const cloudinaryService = {
-    uploadImage: async (file: File): Promise<CloudinaryImage | null> => {
+    uploadImage: async (
+        file: File,
+    ): Promise<ServiceResponse<CloudinaryImage>> => {
         const uploadInCloudinaryRes = await imageClient.uploadInCloudinary(file)
 
         if (
@@ -12,7 +18,10 @@ export const cloudinaryService = {
             const { url, asset_id, public_id, width, height } =
                 uploadInCloudinaryRes.data
 
-            return { url, asset_id, public_id, width, height }
+            return {
+                ok: true,
+                data: { url, asset_id, public_id, width, height },
+            }
         } else if (
             uploadInCloudinaryRes.status === 400 &&
             'reason' in uploadInCloudinaryRes
@@ -20,23 +29,26 @@ export const cloudinaryService = {
             console.error(
                 `Error - uploadInClodinary: ${uploadInCloudinaryRes.reason}`,
             )
-            return null
+            return {
+                ok: false,
+                errorType: SERVICE_ERROR_TYPE.API_ERROR,
+                reason: uploadInCloudinaryRes.reason,
+            }
         } else {
-            console.error('Unexpected Error in cloudinaryService - upload')
-            return null
+            throw new Error('Unexpected Error in cloudinaryService - upload')
         }
     },
 
     deleteImage: async (
         assetId: string,
         publicId: string,
-    ): Promise<boolean> => {
+    ): Promise<ServiceResponse> => {
         const deleteInCloudinaryRes = await imageClient.deleteInCloudinary(
             assetId,
             publicId,
         )
 
-        if (deleteInCloudinaryRes.status === 200) return true
+        if (deleteInCloudinaryRes.status === 200) return { ok: true }
         else if (
             deleteInCloudinaryRes.status === 400 &&
             'reason' in deleteInCloudinaryRes
@@ -44,10 +56,13 @@ export const cloudinaryService = {
             console.error(
                 `Error - deleteInClodinary: ${deleteInCloudinaryRes.reason}`,
             )
-            return false
+            return {
+                ok: false,
+                errorType: SERVICE_ERROR_TYPE.API_ERROR,
+                reason: deleteInCloudinaryRes.reason,
+            }
         } else {
-            console.error('Unexpected Error in cloudinaryService - delete')
-            return false
+            throw new Error('Unexpected Error in cloudinaryService - delete')
         }
     },
 }

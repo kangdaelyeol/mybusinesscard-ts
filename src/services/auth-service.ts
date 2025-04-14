@@ -1,6 +1,6 @@
 import { authClient } from '@/client'
 import { userValidator } from '@/services/validate'
-import { ServiceResponse } from '@/services/types'
+import { SERVICE_ERROR_TYPE, ServiceResponse } from '@/services/types'
 import { jwtUtil, authGuard } from '@/auth'
 
 export const authService = {
@@ -10,17 +10,19 @@ export const authService = {
     ): Promise<ServiceResponse<string>> => {
         const validateUsernameRes = userValidator.username(username)
 
-        if (validateUsernameRes.isValid === false) {
+        if (!validateUsernameRes.isValid) {
             return {
                 ok: false,
+                errorType: SERVICE_ERROR_TYPE.CLIENT_ERROR,
                 reason: "username has 4 to 20 length of characters and doesn't contain special symbol.",
             }
         }
 
         const validatePasswordRes = userValidator.password(password)
-        if (validatePasswordRes.isValid === false) {
+        if (!validatePasswordRes.isValid) {
             return {
                 ok: false,
+                errorType: SERVICE_ERROR_TYPE.CLIENT_ERROR,
                 reason: "password has 4 to 20 length of characters and doesn't contain blank",
             }
         }
@@ -30,6 +32,7 @@ export const authService = {
         if (authRes.status !== 200 && 'reason' in authRes) {
             return {
                 ok: false,
+                errorType: SERVICE_ERROR_TYPE.API_ERROR,
                 reason: authRes.reason,
             }
         } else if (authRes.status === 200 && 'token' in authRes) {
@@ -61,6 +64,7 @@ export const authService = {
             jwtUtil.deleteToken()
             return {
                 ok: false,
+                errorType: SERVICE_ERROR_TYPE.AUTH_ERROR,
                 reason: 'failed to authenticate token or user',
             }
         }
@@ -69,6 +73,7 @@ export const authService = {
         if (validatePasswordRes.isValid === false) {
             return {
                 ok: false,
+                errorType: SERVICE_ERROR_TYPE.CLIENT_ERROR,
                 reason: validatePasswordRes.reason,
             }
         }
@@ -76,6 +81,7 @@ export const authService = {
         if (newPassword !== confirmPassword) {
             return {
                 ok: false,
+                errorType: SERVICE_ERROR_TYPE.CLIENT_ERROR,
                 reason: "new password doesn't match confirm password",
             }
         }
@@ -93,6 +99,7 @@ export const authService = {
         } else if (res.status === 400 && 'reason' in res) {
             return {
                 ok: false,
+                errorType: SERVICE_ERROR_TYPE.API_ERROR,
                 reason: res.reason,
             }
         } else {
