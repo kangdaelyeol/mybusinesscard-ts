@@ -1,10 +1,11 @@
 import { cardService, userService } from '@/services'
-import { GetUserWithCardListResponse } from '@/facade/types'
+import { Card, User } from '@/models'
+import { SERVICE_ERROR_TYPE, ServiceResponse } from '@/services/types'
 
 export const userFacade = {
     getUserWithCardList: async (
         username: string,
-    ): Promise<GetUserWithCardListResponse> => {
+    ): Promise<ServiceResponse<{ user: User; cardList: Card[] }>> => {
         const resList = await Promise.all([
             userService.get(username),
             cardService.getList(username),
@@ -14,14 +15,17 @@ export const userFacade = {
             console.error('Failed to get User with Card List - user facade')
             return {
                 ok: false,
+                errorType: SERVICE_ERROR_TYPE.API_ERROR,
                 reason: 'Failed to get User with Card List',
             }
         }
 
         return {
             ok: true,
-            user: resList[0].data,
-            cardList: resList[1].data,
+            data: {
+                user: resList[0].data as User,
+                cardList: resList[1].data as Card[],
+            },
         }
     },
 }
