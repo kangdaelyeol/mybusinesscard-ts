@@ -1,5 +1,5 @@
 import { ChangeEvent, useContext, useRef, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { ToasterMessageContext, PubSubContext } from '@/context'
 import { Card, cardFactory, CardTheme } from '@/models'
 import {
@@ -11,13 +11,10 @@ import {
 } from '@/store/cards-slice'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
 import { cardService, cloudinaryService } from '@/services'
-import { RootState } from '@/store'
 
 export const useCardEditor = (card: Card) => {
     const { publish } = useContext(PubSubContext)
     const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
-
-    const userState = useSelector((state: RootState) => state.user)
 
     const dispatch = useDispatch()
 
@@ -64,7 +61,6 @@ export const useCardEditor = (card: Card) => {
             const updatedProfile = await cardService.updateProfile(
                 card.id,
                 newProfile,
-                userState.username,
             )
 
             if (!updatedProfile.ok) {
@@ -127,7 +123,7 @@ export const useCardEditor = (card: Card) => {
         cardDelete: () => {
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             if (fileLoading) return
-            cardService.delete(card.id, userState.username).then((res) => {
+            cardService.delete(card.id).then((res) => {
                 if (!res.ok) setToasterMessageTimeOut('Failed to delete card')
             })
             dispatch(deleteCard({ id: card.id }))

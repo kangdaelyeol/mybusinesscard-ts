@@ -2,7 +2,6 @@ import { userClient } from '@/client'
 import { User, UserProfile, UserProfileStyle } from '@/models'
 import { userValidator } from '@/services/validate'
 import { SERVICE_ERROR_TYPE, ServiceResponse } from '@/services/types'
-import { jwtUtil, authGuard } from '@/auth'
 
 export const userService = {
     get: async (username: string): Promise<ServiceResponse<User>> => {
@@ -100,19 +99,6 @@ export const userService = {
         username: string,
         style: UserProfileStyle,
     ): Promise<ServiceResponse<UserProfileStyle>> => {
-        const verifyTokenAndUserRes = await authGuard.verifyTokenAndUsername(
-            username,
-        )
-
-        if (!verifyTokenAndUserRes) {
-            jwtUtil.deleteToken()
-            return {
-                ok: false,
-                errorType: SERVICE_ERROR_TYPE.AUTH_ERROR,
-                reason: 'failed to authenticate token or user',
-            }
-        }
-
         const res = await userClient.updateProfileStyle(username, style)
         if (res.status === 200) {
             return { ok: true, data: style }
@@ -134,19 +120,6 @@ export const userService = {
         username: string,
         profile: UserProfile,
     ): Promise<ServiceResponse<UserProfile>> => {
-        const verifyTokenAndUserRes = await authGuard.verifyTokenAndUsername(
-            username,
-        )
-
-        if (!verifyTokenAndUserRes) {
-            jwtUtil.deleteToken()
-            return {
-                ok: false,
-                errorType: SERVICE_ERROR_TYPE.AUTH_ERROR,
-                reason: 'failed to authenticate token or user',
-            }
-        }
-
         const res = await userClient.updateProfile(username, profile)
         if (res.status === 200) {
             return { ok: true, data: profile }
@@ -168,19 +141,6 @@ export const userService = {
         username: string,
         nickname: string,
     ): Promise<ServiceResponse<string>> => {
-        const verifyTokenAndUserRes = await authGuard.verifyTokenAndUsername(
-            username,
-        )
-
-        if (!verifyTokenAndUserRes) {
-            jwtUtil.deleteToken()
-            return {
-                ok: false,
-                errorType: SERVICE_ERROR_TYPE.AUTH_ERROR,
-                reason: 'failed to authenticate token or user',
-            }
-        }
-
         const validateNicknameRes = userValidator.nickname(nickname)
 
         if (validateNicknameRes.isValid === false) {
@@ -209,19 +169,6 @@ export const userService = {
     },
 
     delete: async (username: string): Promise<ServiceResponse> => {
-        const verifyTokenAndUserRes = await authGuard.verifyTokenAndUsername(
-            username,
-        )
-
-        if (!verifyTokenAndUserRes) {
-            jwtUtil.deleteToken()
-            return {
-                ok: false,
-                errorType: SERVICE_ERROR_TYPE.AUTH_ERROR,
-                reason: 'failed to authenticate token or user',
-            }
-        }
-
         const res = await userClient.remove(username)
 
         if (res.status === 200) return { ok: true }

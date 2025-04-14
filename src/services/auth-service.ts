@@ -1,7 +1,6 @@
 import { authClient } from '@/client'
 import { userValidator } from '@/services/validate'
 import { SERVICE_ERROR_TYPE, ServiceResponse } from '@/services/types'
-import { jwtUtil, authGuard } from '@/auth'
 
 export const authService = {
     signIn: async (
@@ -56,19 +55,6 @@ export const authService = {
         newPassword: string,
         confirmPassword: string,
     ): Promise<ServiceResponse> => {
-        const verifyTokenAndUserRes = await authGuard.verifyTokenAndUsername(
-            username,
-        )
-
-        if (!verifyTokenAndUserRes) {
-            jwtUtil.deleteToken()
-            return {
-                ok: false,
-                errorType: SERVICE_ERROR_TYPE.AUTH_ERROR,
-                reason: 'failed to authenticate token or user',
-            }
-        }
-
         const validatePasswordRes = userValidator.password(newPassword)
         if (validatePasswordRes.isValid === false) {
             return {

@@ -1,26 +1,9 @@
 import { cardClient } from '@/client'
 import { Card, CardProfile, CardStyle, CardTheme } from '@/models'
 import { SERVICE_ERROR_TYPE, ServiceResponse } from '@/services/types'
-import { jwtUtil, authGuard } from '@/auth'
 
 export const cardService = {
-    create: async (
-        card: Card,
-        username: string,
-    ): Promise<ServiceResponse<Card>> => {
-        const verifyTokenAndUserRes = await authGuard.verifyTokenAndUsername(
-            username,
-        )
-
-        if (!verifyTokenAndUserRes) {
-            jwtUtil.deleteToken()
-            return {
-                ok: false,
-                errorType: SERVICE_ERROR_TYPE.AUTH_ERROR,
-                reason: 'failed to authenticate token or user',
-            }
-        }
-
+    create: async (card: Card): Promise<ServiceResponse<Card>> => {
         const res = await cardClient.create(card)
         if (res.status === 200) {
             return {
@@ -50,7 +33,7 @@ export const cardService = {
             console.error(`Failed to update profile - ${res.reason}`)
             return {
                 ok: false,
-                errorType: SERVICE_ERROR_TYPE.AUTH_ERROR,
+                errorType: SERVICE_ERROR_TYPE.API_ERROR,
                 reason: res.reason,
             }
         } else {
@@ -61,21 +44,7 @@ export const cardService = {
     updateProfile: async (
         cardId: string,
         profile: CardProfile,
-        username: string,
     ): Promise<ServiceResponse<CardProfile>> => {
-        const verifyTokenAndUserRes = await authGuard.verifyTokenAndUsername(
-            username,
-        )
-
-        if (!verifyTokenAndUserRes) {
-            jwtUtil.deleteToken()
-            return {
-                ok: false,
-                errorType: SERVICE_ERROR_TYPE.AUTH_ERROR,
-                reason: 'failed to authenticate token or user',
-            }
-        }
-
         const res = await cardClient.updateProfile(cardId, profile)
         if (res.status === 200) {
             return {
@@ -97,21 +66,7 @@ export const cardService = {
     updateProfileStyle: async (
         cardId: string,
         style: CardStyle,
-        username: string,
     ): Promise<ServiceResponse<CardStyle>> => {
-        const verifyTokenAndUserRes = await authGuard.verifyTokenAndUsername(
-            username,
-        )
-
-        if (!verifyTokenAndUserRes) {
-            jwtUtil.deleteToken()
-            return {
-                ok: false,
-                errorType: SERVICE_ERROR_TYPE.AUTH_ERROR,
-                reason: 'failed to authenticate token or user',
-            }
-        }
-
         const res = await cardClient.updateProfileStyle(cardId, style)
         if (res.status === 200) {
             return {
@@ -202,23 +157,7 @@ export const cardService = {
         }
     },
 
-    delete: async (
-        cardId: string,
-        username: string,
-    ): Promise<ServiceResponse> => {
-        const verifyTokenAndUserRes = await authGuard.verifyTokenAndUsername(
-            username,
-        )
-
-        if (!verifyTokenAndUserRes) {
-            jwtUtil.deleteToken()
-            return {
-                ok: false,
-                errorType: SERVICE_ERROR_TYPE.AUTH_ERROR,
-                reason: 'failed to authenticate token or user',
-            }
-        }
-
+    delete: async (cardId: string): Promise<ServiceResponse> => {
         const res = await cardClient.remove(cardId)
         if (res.status === 200) {
             return {

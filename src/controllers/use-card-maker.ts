@@ -107,10 +107,7 @@ export const useCardMaker = () => {
                 createdBy: userState.username,
             })
 
-            const createCardRes = await cardService.create(
-                newCard,
-                userState.username,
-            )
+            const createCardRes = await cardService.create(newCard)
             if (!createCardRes.ok) {
                 setToasterMessageTimeOut('Failed to create card')
                 return
