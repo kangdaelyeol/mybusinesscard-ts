@@ -28,17 +28,22 @@ export const useCardEditor = (card: Card) => {
             if (!e.target.files || e.target.files.length === 0) return
 
             setFileLoading(true)
-            const uploadedImage = await cloudinaryService.uploadImage(
+            const uploadImageRes = await cloudinaryService.uploadImage(
                 e.target.files[0],
             )
 
-            if (!uploadedImage) {
+            if (!uploadImageRes.ok) {
                 setToasterMessageTimeOut('Failed to upload image')
                 setFileLoading(false)
                 return
             }
 
-            const { url, asset_id, public_id, width, height } = uploadedImage
+            if (!uploadImageRes.data) {
+                throw new Error('Type error - uploadImage')
+            }
+
+            const { url, asset_id, public_id, width, height } =
+                uploadImageRes.data
 
             const newProfile = cardFactory.createCardProfile({
                 url,

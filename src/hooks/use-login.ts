@@ -44,10 +44,15 @@ export const useLogin = () => {
             )
 
             if (!signInRes.ok) {
-                setErrorMessage(signInRes.reason)
+                if (signInRes.reason) setErrorMessage(signInRes.reason)
                 setToasterMessageTimeOut('Failed to Signin')
                 setLoading(false)
                 return
+            }
+
+            if (!signInRes.data) {
+                setLoading(false)
+                throw new Error('Type error - sign in')
             }
 
             const getUserRes = await userService.get(signInRes.data)
@@ -56,6 +61,11 @@ export const useLogin = () => {
                 setToasterMessageTimeOut('Failed to fetch user info')
                 setLoading(false)
                 return
+            }
+
+            if (!getUserRes.data) {
+                setLoading(false)
+                throw new Error('Type error - get user')
             }
 
             const { username, profile, nickname } = getUserRes.data
@@ -83,6 +93,10 @@ export const useLogin = () => {
                     LOCALSTORAGE_JWT_REFRESH_TOKEN_NAME,
                     jwtToken.refreshToken,
                 )
+            }
+
+            if (!getCardListRes.data) {
+                throw new Error('Type error - get card list')
             }
 
             dispatch(setUser({ username, profile, nickname }))

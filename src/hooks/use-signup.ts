@@ -62,6 +62,10 @@ export const useSignup = () => {
             )
 
             if (createUserRes.ok) {
+                if (!createUserRes.data) {
+                    throw new Error('type Error - create user')
+                }
+
                 const { username, profile, nickname } = createUserRes.data
 
                 const jwtToken = await jwtUtil.generateToken(username, false)
@@ -75,7 +79,7 @@ export const useSignup = () => {
                 setToasterMessageTimeOut('Sign up sucessfully!!')
                 navigate('/')
             } else {
-                setErrorMessage(createUserRes.reason)
+                if (createUserRes.reason) setErrorMessage(createUserRes.reason)
                 setLoading(false)
             }
             setLoading(false)

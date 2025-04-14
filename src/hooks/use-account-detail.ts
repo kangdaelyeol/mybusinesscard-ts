@@ -98,17 +98,25 @@ export const useAccountDetail = () => {
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             setFileLoading(true)
 
-            const uploadedImage = await cloudinaryService.uploadImage(
+            const uploadImageRes = await cloudinaryService.uploadImage(
                 e.target.files[0],
             )
 
-            if (!uploadedImage) {
-                setToasterMessageTimeOut('Failed to upload image')
+            if (!uploadImageRes.ok) {
+                setToasterMessageTimeOut(
+                    `Failed to upload image - ${uploadImageRes.reason}`,
+                )
                 setFileLoading(false)
                 return
             }
 
-            const { url, asset_id, public_id, width, height } = uploadedImage
+            if (!uploadImageRes.data) {
+                setFileLoading(false)
+                throw new Error('Type Error - uploadImage')
+            }
+
+            const { url, asset_id, public_id, width, height } =
+                uploadImageRes.data
 
             const newProfile = userFactory.createUserProfile({
                 url,
@@ -160,7 +168,10 @@ export const useAccountDetail = () => {
                 nickname,
             )
 
-            if (!updateNicknameRes.ok) {
+            if (
+                !updateNicknameRes.ok &&
+                typeof updateNicknameRes.reason === 'string'
+            ) {
                 setToasterMessageTimeOut('Failed to save')
                 setErrorMessage(updateNicknameRes.reason)
                 setSaveLoading(false)

@@ -69,17 +69,23 @@ export const useProfileDetail = () => {
             if (!e.target.files || e.target.files.length === 0) return
 
             setFileLoading(true)
-            const uploadedImage = await cloudinaryService.uploadImage(
+            const uploadImageRes = await cloudinaryService.uploadImage(
                 e.target.files[0],
             )
 
-            if (!uploadedImage) {
+            if (!uploadImageRes.ok) {
                 setToasterMessageTimeOut('Failed to upload image')
                 setFileLoading(false)
                 return
             }
 
-            const { url, asset_id, public_id, width, height } = uploadedImage
+            if (!uploadImageRes.data) {
+                setFileLoading(false)
+                throw new Error('Type error - upload image')
+            }
+
+            const { url, asset_id, public_id, width, height } =
+                uploadImageRes.data
 
             const newProfile = userFactory.createUserProfile({
                 url,
@@ -111,6 +117,10 @@ export const useProfileDetail = () => {
                     userState.profile.assetId,
                     userState.profile.publicId,
                 )
+            }
+
+            if (!updateRes.data) {
+                throw new Error('Type error - update profile')
             }
 
             dispatch(updateUserProfile({ profile: updateRes.data }))

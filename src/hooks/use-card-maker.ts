@@ -48,11 +48,11 @@ export const useCardMaker = () => {
 
             setFileLoading(true)
 
-            const uploadedImage = await cloudinaryService.uploadImage(
+            const uploadImageRes = await cloudinaryService.uploadImage(
                 e.target.files[0],
             )
 
-            if (!uploadedImage) {
+            if (!uploadImageRes.ok) {
                 setFileLoading(false)
                 setToasterMessageTimeOut('Error - Failed to upload image')
                 return
@@ -64,12 +64,18 @@ export const useCardMaker = () => {
                     cardState.profile.publicId,
                 )
 
-                if (deleteImageRes === false) {
+                if (!deleteImageRes.ok) {
                     setToasterMessageTimeOut('Error - Failed to delete image')
                 }
             }
 
-            const { url, asset_id, public_id, width, height } = uploadedImage
+            if (!uploadImageRes.data) {
+                setFileLoading(false)
+                throw new Error('Type error - upload image')
+            }
+
+            const { url, asset_id, public_id, width, height } =
+                uploadImageRes.data
 
             cardDispatch({
                 type: CARD_ACTIONS.UPDATE_PROFILE,
@@ -108,6 +114,10 @@ export const useCardMaker = () => {
             if (!createCardRes.ok) {
                 setToasterMessageTimeOut('Failed to create card')
                 return
+            }
+
+            if (!createCardRes.data) {
+                throw new Error('Type error - create card')
             }
 
             dispatch(createCard({ card: createCardRes.data }))
