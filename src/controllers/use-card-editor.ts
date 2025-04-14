@@ -1,4 +1,4 @@
-import { ChangeEvent, useContext, useState } from 'react'
+import { ChangeEvent, useContext, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { ToasterMessageContext, PubSubContext } from '@/context'
 import { Card, cardFactory, CardTheme } from '@/models'
@@ -21,13 +21,19 @@ export const useCardEditor = (card: Card) => {
 
     const dispatch = useDispatch()
 
+    const fileInputRef = useRef<HTMLInputElement>(null)
+
     const [fileLoading, setFileLoading] = useState<boolean>(false)
 
     const handlers = {
+        fileInputClick: () => {
+            if (fileLoading || !fileInputRef.current) return
+            fileInputRef && fileInputRef.current.click()
+        },
         profileChange: async (e: ChangeEvent<HTMLInputElement>) => {
             if (!e.target.files || e.target.files.length === 0) return
-
             setFileLoading(true)
+
             const uploadImageRes = await cloudinaryService.uploadImage(
                 e.target.files[0],
             )
@@ -64,7 +70,6 @@ export const useCardEditor = (card: Card) => {
             if (!updatedProfile.ok) {
                 setToasterMessageTimeOut('Failed to update profile')
                 cloudinaryService.deleteImage(asset_id, public_id)
-
                 setFileLoading(false)
                 return
             }
@@ -133,5 +138,6 @@ export const useCardEditor = (card: Card) => {
     return {
         handlers,
         fileLoading,
+        fileInputRef,
     }
 }

@@ -130,6 +130,8 @@ export const useProfileDetail = () => {
         },
 
         newFileClick: () => {
+            if (fileLoading) return
+
             if (fileInputRef.current) {
                 fileInputRef.current.click()
             }

@@ -54,12 +54,13 @@ export const useAccountDetail = () => {
 
     const saveProfileStyle = async (style: UserProfileStyle) => {
         publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
-        const updatedProfile = await userService.updateProfileStyle(
+
+        const updateProfileRes = await userService.updateProfileStyle(
             userState.username,
             style,
         )
 
-        if (!updatedProfile) {
+        if (!updateProfileRes.ok) {
             setToasterMessageTimeOut('Failed to update profile')
             setProfileStyling(false)
             setProfileOption(false)
@@ -89,6 +90,7 @@ export const useAccountDetail = () => {
         },
 
         newFileClick: () => {
+            if (fileLoading) return
             fileInputRef.current?.click()
         },
 
@@ -105,8 +107,8 @@ export const useAccountDetail = () => {
             if (!uploadImageRes.ok) {
                 setToasterMessageTimeOut(
                     `Failed to upload image - ${uploadImageRes.reason}`,
-                )
-                setFileLoading(false)
+                ),
+                    setFileLoading(false)
                 return
             }
 
@@ -128,12 +130,12 @@ export const useAccountDetail = () => {
                 },
             })
 
-            const updatedProfile = await userService.updateProfile(
+            const updateProfileRes = await userService.updateProfile(
                 userState.username,
                 newProfile,
             )
 
-            if (!updatedProfile) {
+            if (!updateProfileRes.ok) {
                 cloudinaryService.deleteImage(
                     newProfile.assetId,
                     newProfile.publicId,
@@ -160,6 +162,8 @@ export const useAccountDetail = () => {
         },
 
         saveButtonClick: async () => {
+            if (saveLoading) return
+
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             setSaveLoading(true)
 
@@ -168,12 +172,8 @@ export const useAccountDetail = () => {
                 nickname,
             )
 
-            if (
-                !updateNicknameRes.ok &&
-                typeof updateNicknameRes.reason === 'string'
-            ) {
-                setToasterMessageTimeOut('Failed to save')
-                setErrorMessage(updateNicknameRes.reason)
+            if (!updateNicknameRes.ok) {
+                setToasterMessageTimeOut('Failed to update nickname')
                 setSaveLoading(false)
                 return
             }
@@ -203,11 +203,10 @@ export const useAccountDetail = () => {
             if (deleteAccountLoading) return
 
             setDeleteAccountLoading(true)
-            const success = await userService.delete(userState.username)
+            const deleteUserRes = await userService.delete(userState.username)
 
-            if (!success) {
+            if (!deleteUserRes.ok) {
                 setToasterMessageTimeOut('Failed to delete user')
-                jwtUtil.deleteToken()
                 setDeleteAccountLoading(false)
                 return
             }
@@ -221,8 +220,8 @@ export const useAccountDetail = () => {
                 }),
             )
 
-            jwtUtil.deleteToken()
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
+            jwtUtil.deleteToken()
             dispatch(clearUser())
             dispatch(clearCards())
             setToasterMessageTimeOut('Your account is deleted successfully!!')

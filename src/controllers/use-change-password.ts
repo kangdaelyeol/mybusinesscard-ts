@@ -52,7 +52,10 @@ export const useChangePassword = () => {
                 passwordState.confirm,
             )
 
-            if (!changePasswordRes.ok && 'reason' in changePasswordRes) {
+            if (
+                !changePasswordRes.ok &&
+                typeof changePasswordRes.reason === 'string'
+            ) {
                 setErrorMessage(changePasswordRes.reason)
                 setSaveLoading(false)
                 return

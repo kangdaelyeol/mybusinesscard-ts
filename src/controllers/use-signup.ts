@@ -49,6 +49,7 @@ export const useSignup = () => {
         },
 
         signupSubmit: async (e: FormEvent<HTMLFormElement>) => {
+            if (loading) return
             e.preventDefault()
             setLoading(true)
             const { username, password, confirmPassword, nickname } =

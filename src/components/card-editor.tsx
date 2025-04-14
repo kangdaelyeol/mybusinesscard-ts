@@ -1,4 +1,4 @@
-import { useRef, useContext } from 'react'
+import { useContext } from 'react'
 import classNames from 'classnames'
 import { ThemeContext } from '@/context'
 import { useCardEditor } from '@/controllers'
@@ -8,16 +8,9 @@ import { Card } from '@/models'
 type CardEditorProp = { card: Card }
 
 export const CardEditor = ({ card }: CardEditorProp) => {
-    const { handlers, fileLoading } = useCardEditor(card)
+    const { handlers, fileLoading, fileInputRef } = useCardEditor(card)
 
     const { theme } = useContext(ThemeContext)
-
-    const fileInputRef = useRef<HTMLInputElement>(null)
-
-    const handleFileInputClick = () => {
-        if (fileLoading || !fileInputRef.current) return
-        fileInputRef && fileInputRef.current.click()
-    }
 
     return (
         <div className="flex flex-1 justify-center items-center h-[230px]">
@@ -80,7 +73,7 @@ export const CardEditor = ({ card }: CardEditorProp) => {
                     />
 
                     <button
-                        onClick={handleFileInputClick}
+                        onClick={handlers.fileInputClick}
                         className={classNames(
                             'font-bold py-[10px] rounded-[5px] select-none grow transition-all border-[1px]',
                             {
