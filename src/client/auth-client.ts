@@ -28,7 +28,7 @@ export const authClient = {
             return { status: 200, data: username }
         } catch (e) {
             console.log(e)
-            return { status: 400, reason: 'Failed to request API - signIn' }
+            return { status: 500, reason: 'Failed to request API - signIn' }
         }
     },
 
@@ -66,7 +66,7 @@ export const authClient = {
             return { status: 200 }
         } catch (e) {
             return {
-                status: 400,
+                status: 500,
                 reason: 'Failed to request API - changePassword',
             }
         }

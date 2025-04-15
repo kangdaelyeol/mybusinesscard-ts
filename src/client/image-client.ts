@@ -30,7 +30,7 @@ export const imageClient = {
             return { status: res.status, data: res.data }
         } catch (e) {
             console.error(e)
-            return { status: 400, reason: 'Failed to upload in Cloudinary' }
+            return { status: 500, reason: 'Failed to upload in Cloudinary' }
         }
     },
 
@@ -66,7 +66,7 @@ export const imageClient = {
         } catch (e) {
             console.error(e)
             return {
-                status: 400,
+                status: 500,
                 reason: 'Unexpected Error in Delete Image API',
             }
         }

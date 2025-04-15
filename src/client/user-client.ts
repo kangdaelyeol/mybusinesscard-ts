@@ -7,19 +7,27 @@ import { bcryptUtil } from '@/auth'
 export const userClient = {
     get: async (username: string): Promise<ClientResponse<User>> => {
         const userRef = ref(db, `users/${username}`)
-        const snapshot = await get(userRef)
-        if (!snapshot.exists()) {
-            return {
-                status: 400,
-                reason: "User doesn't exist!",
+        try {
+            const snapshot = await get(userRef)
+            if (!snapshot.exists()) {
+                return {
+                    status: 400,
+                    reason: "User doesn't exist!",
+                }
             }
-        }
 
-        const userData: User = snapshot.val()
+            const userData: User = snapshot.val()
 
-        return {
-            status: 200,
-            data: userData,
+            return {
+                status: 200,
+                data: userData,
+            }
+        } catch (e) {
+            console.error(e)
+            return {
+                status: 500,
+                reason: 'Failed to request API - getUser',
+            }
         }
     },
 
@@ -52,7 +60,7 @@ export const userClient = {
             }
         } catch (e) {
             console.error(e)
-            return { status: 400, reason: 'Failed to request API - createUser' }
+            return { status: 500, reason: 'Failed to request API - createUser' }
         }
     },
 
@@ -67,7 +75,7 @@ export const userClient = {
         } catch (e) {
             console.error(e)
             return {
-                status: 400,
+                status: 500,
                 reason: 'Failed to request API - removeUser',
             }
         }
@@ -88,7 +96,7 @@ export const userClient = {
         } catch (e) {
             console.error(e)
             return {
-                status: 400,
+                status: 500,
                 reason: 'Failed to request API - updateUserProfile',
             }
         }
@@ -108,7 +116,7 @@ export const userClient = {
         } catch (e) {
             console.error(e)
             return {
-                status: 400,
+                status: 500,
                 reason: 'failed to request API - updateUserProfileStyle',
             }
         }
@@ -128,7 +136,7 @@ export const userClient = {
         } catch (e) {
             console.error(e)
             return {
-                status: 400,
+                status: 500,
                 reason: 'Failed to request API - updateUserNickname',
             }
         }

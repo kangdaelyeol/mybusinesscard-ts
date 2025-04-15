@@ -33,7 +33,7 @@ export const cardClient = {
         } catch (e) {
             console.error(e)
             return {
-                status: 400,
+                status: 500,
                 reason: 'Failed to request API - getCardList',
             }
         }
@@ -50,7 +50,7 @@ export const cardClient = {
         } catch (e) {
             console.error(e)
             return {
-                status: 400,
+                status: 500,
                 reason: 'Failed to request API - createCard',
             }
         }
@@ -70,7 +70,7 @@ export const cardClient = {
         } catch (e) {
             console.error(e)
             return {
-                status: 400,
+                status: 500,
                 reason: 'Failed to request API - updateCardName',
             }
         }
@@ -90,7 +90,7 @@ export const cardClient = {
         } catch (e) {
             console.error(e)
             return {
-                status: 400,
+                status: 500,
                 reason: 'Failed to request API - updateCardDescription',
             }
         }
@@ -110,7 +110,7 @@ export const cardClient = {
         } catch (e) {
             console.error(e)
             return {
-                status: 400,
+                status: 500,
                 reason: 'Failed to request API - updateCardTheme',
             }
         }
@@ -129,7 +129,7 @@ export const cardClient = {
             }
         } catch (e) {
             return {
-                status: 400,
+                status: 500,
                 reason: 'Failed to request API - updateCardProfile',
             }
         }
@@ -149,7 +149,7 @@ export const cardClient = {
         } catch (e) {
             console.error(e)
             return {
-                status: 400,
+                status: 500,
                 reason: 'Failed to request API - updateCardProfileStyle',
             }
         }
@@ -166,7 +166,7 @@ export const cardClient = {
         } catch (e) {
             console.error(e)
             return {
-                status: 400,
+                status: 500,
                 reason: 'Failed to request API - removeCard',
             }
         }
