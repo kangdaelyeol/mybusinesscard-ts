@@ -16,10 +16,12 @@ export const ImgDisplay = ({ size, profile }: ImgDisplayProps) => {
     return (
         <div
             className="relative overflow-hidden rounded-[var(--img-rounded)] w-[var(--img-size)] h-[var(--img-size)]"
-            style={{
-                '--img-size': `${size}px`,
-                '--img-rounded': `${rounded}%`,
-            }}
+            style={
+                {
+                    '--img-size': `${size}px`,
+                    '--img-rounded': `${rounded}%`,
+                } as React.CSSProperties
+            }
         >
             <img
                 src={profile.url || DEFAULT_PROFILE_URL}
@@ -27,11 +29,13 @@ export const ImgDisplay = ({ size, profile }: ImgDisplayProps) => {
                 width={newWidth}
                 height={newHeight}
                 className="absolute top-0 left-0 origin-top-left scale-[var(--img-scale)] translate-x-[var(--img-transX)] translate-y-[var(--img-transY)]"
-                style={{
-                    '--img-scale': scale,
-                    '--img-transX': `-${transX}%`,
-                    '--img-transY': `-${transY}%`,
-                }}
+                style={
+                    {
+                        '--img-scale': scale,
+                        '--img-transX': `-${transX}%`,
+                        '--img-transY': `-${transY}%`,
+                    } as React.CSSProperties
+                }
             />
         </div>
     )

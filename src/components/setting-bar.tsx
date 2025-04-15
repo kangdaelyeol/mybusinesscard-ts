@@ -40,25 +40,31 @@ export const SettingBar = ({
                         'bg-gray-900': isDisable === true,
                     },
                 )}
-                style={{
-                    '--bar-width': `${barWidth}px`,
-                }}
+                style={
+                    {
+                        '--bar-width': `${barWidth}px`,
+                    } as React.CSSProperties
+                }
             >
                 {!isDisable && (
                     <>
                         <div
                             className="h-[200%] w-[20px] absolute top-[-50%] left-[var(--controller-x)] rounded-[50%] bg-blue"
-                            style={{
-                                '--controller-x': `${
-                                    barRate * barWidth - 10
-                                }px`,
-                            }}
+                            style={
+                                {
+                                    '--controller-x': `${
+                                        barRate * barWidth - 10
+                                    }px`,
+                                } as React.CSSProperties
+                            }
                         ></div>
                         <div
                             className="absolute h-full top-0 left-0 w-[var(--bar-width)] bg-blue"
-                            style={{
-                                '--bar-width': `${barRate * barWidth}px`,
-                            }}
+                            style={
+                                {
+                                    '--bar-width': `${barRate * barWidth}px`,
+                                } as React.CSSProperties
+                            }
                         ></div>
                     </>
                 )}

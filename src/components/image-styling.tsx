@@ -78,9 +78,11 @@ export const ImageStyling = ({
                     ></div>
                     <div
                         className="relative w-[var(--img-size)] h-[var(--img-size)] overflow-hidden border-[5px] border-gray-900 border-solid"
-                        style={{
-                            '--img-size': `${pictureSize}px`,
-                        }}
+                        style={
+                            {
+                                '--img-size': `${pictureSize}px`,
+                            } as React.CSSProperties
+                        }
                     >
                         <img
                             className="absolute picture-filter scale-[var(--img-scale)] origin-top-left translate-x-[var(--img-translateX)] translate-y-[var(--img-translateY)]"
@@ -88,18 +90,22 @@ export const ImageStyling = ({
                             alt="resized picture"
                             width={newWidth}
                             height={newHeight}
-                            style={{
-                                '--img-scale': scale,
-                                '--img-translateX': `-${transX}%`,
-                                '--img-translateY': `-${transY}%`,
-                            }}
+                            style={
+                                {
+                                    '--img-scale': scale,
+                                    '--img-translateX': `-${transX}%`,
+                                    '--img-translateY': `-${transY}%`,
+                                } as React.CSSProperties
+                            }
                         />
 
                         <div
                             className="absolute top-0 left-0 w-full h-full rounded-[var(--picture-rounded)] overflow-hidden"
-                            style={{
-                                '--picture-rounded': `${rounded}%`,
-                            }}
+                            style={
+                                {
+                                    '--picture-rounded': `${rounded}%`,
+                                } as React.CSSProperties
+                            }
                         >
                             <img
                                 className="absolute scale-[var(--img-scale)] translate-x-[var(--img-translateX)] translate-y-[var(--img-translateY)] origin-top-left"
@@ -107,20 +113,24 @@ export const ImageStyling = ({
                                 alt="resized picture"
                                 width={newWidth}
                                 height={newHeight}
-                                style={{
-                                    '--img-scale': scale,
-                                    '--img-translateX': `-${transX}%`,
-                                    '--img-translateY': `-${transY}%`,
-                                }}
+                                style={
+                                    {
+                                        '--img-scale': scale,
+                                        '--img-translateX': `-${transX}%`,
+                                        '--img-translateY': `-${transY}%`,
+                                    } as React.CSSProperties
+                                }
                             />
                         </div>
                     </div>
 
                     <div
                         className="flex flex-col h-[400px] w-[var(--bar-width)]"
-                        style={{
-                            '--bar-width': `${pictureSize}px`,
-                        }}
+                        style={
+                            {
+                                '--bar-width': `${pictureSize}px`,
+                            } as React.CSSProperties
+                        }
                     >
                         {settingBarOptionList.map((option) => (
                             <SettingBar key={option.title} {...option} />
