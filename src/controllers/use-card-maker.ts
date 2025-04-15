@@ -7,12 +7,14 @@ import { CardContext, ToasterMessageContext, PubSubContext } from '@/context'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
 import { cardService, cloudinaryService } from '@/services'
 import { RootState } from '@/store'
+import { useAuth } from '@/hooks/useAuth'
 
 export const useCardMaker = () => {
     const { publish } = useContext(PubSubContext)
     const { cardState, cardDispatch } = useContext(CardContext)
     const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
     const userState = useSelector((state: RootState) => state.user)
+    const checkAuth = useAuth()
 
     const dispatch = useDispatch()
 
@@ -44,6 +46,7 @@ export const useCardMaker = () => {
         },
 
         fileInput: async (e: ChangeEvent<HTMLInputElement>) => {
+            await checkAuth()
             if (!e.target.files || e.target.files.length === 0) return
 
             setFileLoading(true)
@@ -96,6 +99,7 @@ export const useCardMaker = () => {
         },
 
         cardSave: async () => {
+            await checkAuth()
             if (fileLoading) return
 
             const cardID = Date.now().toString()

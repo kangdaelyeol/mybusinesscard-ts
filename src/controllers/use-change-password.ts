@@ -5,12 +5,14 @@ import { ToasterMessageContext, PubSubContext } from '@/context'
 import { RootState } from '@/store'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
 import { authService } from '@/services/auth-service'
+import { useAuth } from '@/hooks/useAuth'
 
 export const useChangePassword = () => {
     const { publish } = useContext(PubSubContext)
     const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
 
     const userState = useSelector((state: RootState) => state.user)
+    const checkAuth = useAuth()
 
     const [errorMessage, setErrorMessage] = useState<string>('')
     const [saveLoading, setSaveLoading] = useState<boolean>(false)
@@ -42,6 +44,7 @@ export const useChangePassword = () => {
         },
 
         saveButtonClick: async () => {
+            await checkAuth()
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             setSaveLoading(true)
 

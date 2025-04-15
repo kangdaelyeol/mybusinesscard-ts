@@ -11,10 +11,12 @@ import {
 } from '@/store/cards-slice'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
 import { cardService, cloudinaryService } from '@/services'
+import { useAuth } from '@/hooks/useAuth'
 
 export const useCardEditor = (card: Card) => {
     const { publish } = useContext(PubSubContext)
     const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
+    const checkAuth = useAuth()
 
     const dispatch = useDispatch()
 
@@ -28,6 +30,7 @@ export const useCardEditor = (card: Card) => {
             fileInputRef && fileInputRef.current.click()
         },
         profileChange: async (e: ChangeEvent<HTMLInputElement>) => {
+            await checkAuth()
             if (!e.target.files || e.target.files.length === 0) return
             setFileLoading(true)
 
@@ -120,7 +123,8 @@ export const useCardEditor = (card: Card) => {
             )
         },
 
-        cardDelete: () => {
+        cardDelete: async () => {
+            await checkAuth()
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             if (fileLoading) return
             cardService.delete(card.id).then((res) => {

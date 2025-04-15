@@ -14,6 +14,7 @@ import { PubSubContext, ToasterMessageContext } from '@/context'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
 import { cloudinaryService, userService } from '@/services'
 import { jwtUtil } from '@/auth'
+import { useAuth } from '@/hooks/useAuth'
 
 export const useAccountDetail = () => {
     const { publish, subscribe, unSubscribe } = useContext(PubSubContext)
@@ -22,6 +23,7 @@ export const useAccountDetail = () => {
     const userState = useSelector((state: RootState) => state.user)
     const cards = useSelector((state: RootState) => state.cards)
     const dispatch = useDispatch()
+    const checkAuth = useAuth()
 
     const [fileLoading, setFileLoading] = useState<boolean>(false)
     const [saveLoading, setSaveLoading] = useState<boolean>(false)
@@ -95,6 +97,7 @@ export const useAccountDetail = () => {
         },
 
         fileInput: async (e: ChangeEvent<HTMLInputElement>) => {
+            await checkAuth()
             if (!e.target.files?.length) return
 
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
@@ -162,6 +165,7 @@ export const useAccountDetail = () => {
         },
 
         saveButtonClick: async () => {
+            await checkAuth()
             if (saveLoading) return
 
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
@@ -200,6 +204,7 @@ export const useAccountDetail = () => {
         },
 
         deleteAccountInModalClick: async () => {
+            await checkAuth()
             if (deleteAccountLoading) return
 
             setDeleteAccountLoading(true)

@@ -13,6 +13,7 @@ import { RootState } from '@/store'
 import { PUBSUB_EVENT_TYPES } from '@/context/types'
 import { cloudinaryService, userService } from '@/services'
 import { jwtUtil } from '@/auth'
+import { useAuth } from '@/hooks/useAuth'
 
 export const useProfileDetail = () => {
     const { subscribe, unSubscribe, publish } = useContext(PubSubContext)
@@ -20,6 +21,7 @@ export const useProfileDetail = () => {
 
     const userState = useSelector((state: RootState) => state.user)
     const dispatch = useDispatch()
+    const checkAuth = useAuth()
 
     const [imageStyling, setImageStyling] = useState(false)
     const [imageOption, setImageOption] = useState(false)
@@ -66,6 +68,7 @@ export const useProfileDetail = () => {
         },
 
         fileInput: async (e: ChangeEvent<HTMLInputElement>) => {
+            await checkAuth()
             if (!e.target.files || e.target.files.length === 0) return
 
             setFileLoading(true)
