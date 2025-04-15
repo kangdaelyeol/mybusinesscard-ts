@@ -34,15 +34,10 @@ export const authService = {
                 errorType: SERVICE_ERROR_TYPE.API_ERROR,
                 reason: authRes.reason,
             }
-        } else if (authRes.status === 200 && 'token' in authRes) {
-            if (typeof authRes.token !== 'string') {
-                throw new Error(
-                    'Unexpected Error - token type error in auth service - Sign in',
-                )
-            }
+        } else if (authRes.status === 200 && 'data' in authRes) {
             return {
                 ok: true,
-                data: authRes.token,
+                data: authRes.data,
             }
         } else {
             throw new Error('Unexpected Error - Sign in')
@@ -82,7 +77,7 @@ export const authService = {
             return {
                 ok: true,
             }
-        } else if (res.status === 400 && 'reason' in res) {
+        } else if (res.status !== 200 && 'reason' in res) {
             return {
                 ok: false,
                 errorType: SERVICE_ERROR_TYPE.API_ERROR,
