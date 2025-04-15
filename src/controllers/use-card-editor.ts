@@ -30,7 +30,7 @@ export const useCardEditor = (card: Card) => {
             fileInputRef && fileInputRef.current.click()
         },
         profileChange: async (e: ChangeEvent<HTMLInputElement>) => {
-            await checkAuth()
+            if (!(await checkAuth())) return
             if (!e.target.files || e.target.files.length === 0) return
             setFileLoading(true)
 
@@ -124,7 +124,7 @@ export const useCardEditor = (card: Card) => {
         },
 
         cardDelete: async () => {
-            await checkAuth()
+            if (!(await checkAuth())) return
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             if (fileLoading) return
             cardService.delete(card.id).then((res) => {

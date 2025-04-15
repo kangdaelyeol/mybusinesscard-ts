@@ -46,7 +46,7 @@ export const useCardMaker = () => {
         },
 
         fileInput: async (e: ChangeEvent<HTMLInputElement>) => {
-            await checkAuth()
+            if (!(await checkAuth())) return
             if (!e.target.files || e.target.files.length === 0) return
 
             setFileLoading(true)
@@ -99,7 +99,7 @@ export const useCardMaker = () => {
         },
 
         cardSave: async () => {
-            await checkAuth()
+            if (!(await checkAuth())) return
             if (fileLoading) return
 
             const cardID = Date.now().toString()

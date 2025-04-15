@@ -51,7 +51,13 @@ export default function LoggedInOnly({ children }: LoggedInOnlyProps) {
                 return
             }
 
-            const { cardList, user } = getUserWithCardListRes
+            if (!getUserWithCardListRes.data) {
+                throw new Error(
+                    'unexpected type error - get user and card list',
+                )
+            }
+
+            const { cardList, user } = getUserWithCardListRes.data
 
             dispatch(
                 setUser({

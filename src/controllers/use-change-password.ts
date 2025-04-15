@@ -44,7 +44,7 @@ export const useChangePassword = () => {
         },
 
         saveButtonClick: async () => {
-            await checkAuth()
+            if (!(await checkAuth())) return
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
             setSaveLoading(true)
 

@@ -97,7 +97,7 @@ export const useAccountDetail = () => {
         },
 
         fileInput: async (e: ChangeEvent<HTMLInputElement>) => {
-            await checkAuth()
+            if (!(await checkAuth())) return
             if (!e.target.files?.length) return
 
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
@@ -165,7 +165,7 @@ export const useAccountDetail = () => {
         },
 
         saveButtonClick: async () => {
-            await checkAuth()
+            if (!(await checkAuth())) return
             if (saveLoading) return
 
             publish(PUBSUB_EVENT_TYPES.HIDE_PROFILE_DETAIL)
@@ -204,7 +204,7 @@ export const useAccountDetail = () => {
         },
 
         deleteAccountInModalClick: async () => {
-            await checkAuth()
+            if (!(await checkAuth())) return
             if (deleteAccountLoading) return
 
             setDeleteAccountLoading(true)

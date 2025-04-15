@@ -13,7 +13,7 @@ export const useAuth = () => {
     const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
     const userState = useSelector((state: RootState) => state.user)
 
-    const authenticateTokenAndUser = async () => {
+    const authenticateTokenAndUser = async (): Promise<boolean> => {
         const isAuthenticated = await authGuard.verifyTokenAndUsername(
             userState.username,
         )
@@ -22,8 +22,11 @@ export const useAuth = () => {
             dispatch(clearCards())
             jwtUtil.deleteToken()
             setToasterMessageTimeOut('Failed to verify token and user')
-            navigate('/')
+            navigate('/login')
+            return false
         }
+
+        return true
     }
 
     return authenticateTokenAndUser

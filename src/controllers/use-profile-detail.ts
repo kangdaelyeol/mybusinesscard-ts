@@ -68,7 +68,7 @@ export const useProfileDetail = () => {
         },
 
         fileInput: async (e: ChangeEvent<HTMLInputElement>) => {
-            await checkAuth()
+            if (!(await checkAuth())) return
             if (!e.target.files || e.target.files.length === 0) return
 
             setFileLoading(true)
