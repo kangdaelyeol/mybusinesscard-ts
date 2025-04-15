@@ -59,7 +59,13 @@ export default function GuestOnly({ children }: GuestOnlyProps) {
                 return
             }
 
-            const { cardList, user } = getUserWithCardListRes
+            if (!getUserWithCardListRes.data) {
+                throw new Error(
+                    "'Unexpected Type Error - get user and card list',",
+                )
+            }
+
+            const { cardList, user } = getUserWithCardListRes.data
 
             dispatch(initCards({ cards: cardList }))
             setUser({

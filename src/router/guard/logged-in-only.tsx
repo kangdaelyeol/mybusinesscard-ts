@@ -53,7 +53,7 @@ export default function LoggedInOnly({ children }: LoggedInOnlyProps) {
 
             if (!getUserWithCardListRes.data) {
                 throw new Error(
-                    'unexpected type error - get user and card list',
+                    'Unexpected Type Error - get user and card list',
                 )
             }
 
