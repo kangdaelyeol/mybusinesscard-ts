@@ -6,7 +6,7 @@ import {
     RATE_BAR_WIDTH_MEDIUM,
 } from '@/constants'
 import { ContextProps, ResponsiveContextType } from '@/context/types'
-import { throttle } from 'lodash'
+import { throttle } from 'lodash-es'
 
 export const ResponsiveContext = createContext<ResponsiveContextType>({
     barWidth: RATE_BAR_WIDTH,
