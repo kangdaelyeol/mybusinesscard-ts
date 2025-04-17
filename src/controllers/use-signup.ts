@@ -1,17 +1,10 @@
 import { ChangeEvent, FormEvent, useContext, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import { ToasterMessageContext } from '@/context'
-import { initCards } from '@/store/cards-slice'
-import { setUser } from '@/store/user-slice'
 import { userService } from '@/services'
-import { LOCALSTORAGE_JWT_ACCESS_TOKEN_NAME } from '@/constants'
-import { jwtUtil } from '@/auth'
 import { useNavigate } from 'react-router-dom'
 
 export const useSignup = () => {
     const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
-
-    const dispatch = useDispatch()
 
     const navigate = useNavigate()
 

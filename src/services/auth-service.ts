@@ -6,6 +6,7 @@ export const authService = {
     signIn: async (
         username: string,
         password: string,
+        rememberMe: boolean,
     ): Promise<ServiceResponse<string>> => {
         const validateUsernameRes = userValidator.username(username)
 
@@ -26,7 +27,7 @@ export const authService = {
             }
         }
 
-        const authRes = await authClient.signIn(username, password)
+        const authRes = await authClient.signIn(username, password, rememberMe)
 
         if (authRes.status !== 200 && 'reason' in authRes) {
             return {

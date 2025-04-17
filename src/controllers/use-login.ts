@@ -41,6 +41,7 @@ export const useLogin = () => {
             const signInRes = await authService.signIn(
                 loginInput.username,
                 loginInput.password,
+                loginInput.remember,
             )
 
             if (!signInRes.ok) {
