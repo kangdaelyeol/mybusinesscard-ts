@@ -1,8 +1,26 @@
-import { useContext } from 'react'
+import { lazy, Suspense, useContext } from 'react'
 import classNames from 'classnames'
 import { ThemeContext } from '@/context'
-import { CardDisplay, CreateCard, CardEditor } from '@/components'
 import { useMain } from '@/controllers'
+import { CreateCardFallback, CardEditorFallback } from '@/components/fallback'
+
+const CreateCard = lazy(() =>
+    import('@/components/create-card').then((module) => ({
+        default: module.CreateCard,
+    })),
+)
+
+const CardDisplay = lazy(() =>
+    import('@/components/card-display').then((module) => ({
+        default: module.CardDisplay,
+    })),
+)
+
+const CardEditor = lazy(() =>
+    import('@/components/card-editor').then((module) => ({
+        default: module.CardEditor,
+    })),
+)
 
 export const Main = () => {
     const { theme } = useContext(ThemeContext)
@@ -50,8 +68,12 @@ export const Main = () => {
                         key={card.id}
                         className="flex gap-[20px] max-medium:flex-col-reverse max-medium:mt-[20px]"
                     >
-                        <CardEditor card={card} />
-                        <CardDisplay card={card} />
+                        <Suspense fallback={<CardEditorFallback />}>
+                            <CardEditor card={card} />
+                        </Suspense>
+                        <Suspense fallback={<CardEditorFallback />}>
+                            <CardDisplay card={card} />
+                        </Suspense>
                     </div>
                 ))}
             </div>
@@ -71,7 +93,11 @@ export const Main = () => {
                     add
                 </span>
             </div>
-            {createCard && <CreateCard />}
+            {createCard && (
+                <Suspense fallback={<CreateCardFallback />}>
+                    <CreateCard />
+                </Suspense>
+            )}
         </div>
     )
 }
