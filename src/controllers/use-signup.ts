@@ -62,27 +62,18 @@ export const useSignup = () => {
                 nickname,
             )
 
-            if (createUserRes.ok) {
-                if (!createUserRes.data) {
-                    throw new Error('type Error - create user')
-                }
-
-                const { username, profile, nickname } = createUserRes.data
-
-                const jwtToken = await jwtUtil.generateToken(username, false)
-                localStorage.setItem(
-                    LOCALSTORAGE_JWT_ACCESS_TOKEN_NAME,
-                    jwtToken.accessToken,
-                )
-
-                dispatch(setUser({ username, profile, nickname }))
-                dispatch(initCards({ cards: [] }))
-                setToasterMessageTimeOut('Sign up sucessfully!!')
-                navigate('/')
-            } else {
+            if (!createUserRes.ok) {
                 if (createUserRes.reason) setErrorMessage(createUserRes.reason)
                 setLoading(false)
+                return
             }
+
+            if (!createUserRes.data) {
+                throw new Error('type Error - create user')
+            }
+
+            setToasterMessageTimeOut('Sign up sucessfully!!')
+            navigate('/login')
             setLoading(false)
         },
     }

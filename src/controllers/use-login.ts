@@ -1,16 +1,11 @@
 import { ChangeEvent, FormEvent, useContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import {
-    LOCALSTORAGE_JWT_ACCESS_TOKEN_NAME,
-    LOCALSTORAGE_JWT_REFRESH_TOKEN_NAME,
-} from '@/constants'
 import { ToasterMessageContext } from '@/context'
 import { initCards } from '@/store/cards-slice'
 import { setUser } from '@/store/user-slice'
 import { authService } from '@/services/auth-service'
 import { cardService, userService } from '@/services'
-import { jwtUtil } from '@/auth'
 
 export const useLogin = () => {
     const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
@@ -76,23 +71,6 @@ export const useLogin = () => {
                 setToasterMessageTimeOut('Failed to fetch card info')
                 setLoading(false)
                 return
-            }
-
-            const jwtToken = await jwtUtil.generateToken(
-                username,
-                loginInput.remember,
-            )
-
-            localStorage.setItem(
-                LOCALSTORAGE_JWT_ACCESS_TOKEN_NAME,
-                jwtToken.accessToken,
-            )
-
-            if (jwtToken.refreshToken) {
-                localStorage.setItem(
-                    LOCALSTORAGE_JWT_REFRESH_TOKEN_NAME,
-                    jwtToken.refreshToken,
-                )
             }
 
             if (!getCardListRes.data) {

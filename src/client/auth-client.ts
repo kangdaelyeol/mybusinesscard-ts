@@ -1,12 +1,17 @@
 import { db } from '@/config/firebase'
 import { ref, get, child, set } from 'firebase/database'
-import { bcryptUtil } from '@/auth'
+import { bcryptUtil, jwtUtil } from '@/auth'
 import { ClientResponse } from '@/client/types'
+import {
+    LOCALSTORAGE_JWT_ACCESS_TOKEN_NAME,
+    LOCALSTORAGE_JWT_REFRESH_TOKEN_NAME,
+} from '@/constants'
 
 export const authClient = {
     signIn: async (
         username: string,
         password: string,
+        rememberMe: boolean,
     ): Promise<ClientResponse<string>> => {
         try {
             const snapshot = await get(child(ref(db), `/users/${username}`))
@@ -24,6 +29,20 @@ export const authClient = {
 
             if (!comparePasswordRes)
                 return { status: 400, reason: "password doesn't match!" }
+
+            const jwtToken = await jwtUtil.generateToken(username, rememberMe)
+
+            localStorage.setItem(
+                LOCALSTORAGE_JWT_ACCESS_TOKEN_NAME,
+                jwtToken.accessToken,
+            )
+
+            if (jwtToken.refreshToken) {
+                localStorage.setItem(
+                    LOCALSTORAGE_JWT_REFRESH_TOKEN_NAME,
+                    jwtToken.refreshToken,
+                )
+            }
 
             return { status: 200, data: username }
         } catch (e) {
