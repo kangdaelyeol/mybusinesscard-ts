@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useContext, useState } from 'react'
+import { ChangeEvent, FormEvent, useContext, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { ToasterMessageContext } from '@/context'
@@ -9,6 +9,11 @@ import { cardService, userService } from '@/services'
 
 export const useLogin = () => {
     const { setToasterMessageTimeOut } = useContext(ToasterMessageContext)
+    useEffect(() => {
+        import('@/components/main')
+        import('@/components/card-display')
+        import('@/components/card-editor')
+    }, [])
 
     const dispatch = useDispatch()
 
