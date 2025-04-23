@@ -40,6 +40,10 @@ export const useAccountDetail = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
+        import('@/components/change-password')
+    }, [])
+
+    useEffect(() => {
         const hideProfileStyling = () => {
             setProfileStyling(false)
         }

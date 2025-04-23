@@ -13,6 +13,7 @@ export const useLogin = () => {
         import('@/components/main')
         import('@/components/card-display')
         import('@/components/card-editor')
+        import('@/components/sign-up')
     }, [])
 
     const dispatch = useDispatch()

@@ -7,7 +7,7 @@ import { PUBSUB_EVENT_TYPES } from '@/context/types'
 export const useMain = () => {
     useEffect(() => {
         import('@/components/create-card')
-        import('@/components/card-maker')
+        import('@/components/account-detail')
     }, [])
     const cards = useSelector((state: RootState) => state.cards)
 
